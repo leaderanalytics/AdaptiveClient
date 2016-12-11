@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public class Class1
+    public interface IEndPointCollection
     {
-        public Class1()
-        {
-        }
+        string Collection_Name { get; }
+        IList<IEndPointConfiguration> EndPoints { get; }
     }
 }

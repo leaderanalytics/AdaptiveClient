@@ -1,13 +1,48 @@
-﻿{
+{
+  "copyright": "Sam Wheat",
+  "description": "Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints",
+  "title": "LeaderAnalytics.AdaptiveClient",
   "version": "1.0.0-*",
 
   "dependencies": {
-    "NETStandard.Library": "1.6.0"
+    "Autofac": "4.2.1",
+    "NETStandard.Library": "1.6.1",
+    "Microsoft.Extensions.Options": "1.1.0",
+    "System.ServiceModel.Http": "4.3.0",
+    "System.ServiceModel.NetTcp": "4.3.0",
+    "System.ServiceModel.Primitives": "4.3.0",
+    "System.ServiceModel.Security": "4.3.0",
+    "System.Data.SqlClient": "4.3.0",
+    "System.Net.NetworkInformation": "4.3.0",
+    "System.Runtime.Serialization.Primitives": "4.3.0"
   },
 
   "frameworks": {
     "netstandard1.6": {
       "imports": "dnxcore50"
+    },
+    "net462": {
+      "frameworkAssemblies": {
+        "System.ServiceModel": "4.0.0.0"
+      }
     }
+  },
+  "authors": [ "Leader Analytics" ],
+  "packOptions": {
+    "summary": "Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints",
+    "tags": [ "REST", "WCF", "AutoFac", "Entity Framework", "Leader Analytics" ],
+    "owners": [ "Sam Wheat" ],
+    "releaseNotes": "See Repository",
+    "iconUrl": "https://static-s.aa-cdn.net/img/ios/776959045/458370cf178aacd41bc6cf251dd4bd68?v=1",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/leaderanalytics/AdaptiveClient"
+    },
+    "requireLicenseAcceptance": false
+  },
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --output nuget/pkg"
+    ]
   }
 }
