@@ -18,8 +18,8 @@ namespace LeaderAnalytics.AdaptiveClient
                 throw new ArgumentNullException("builder");
 
             this.builder = builder;
+            builder.RegisterModule(new IOCModule());
             EndPointDict = new Dictionary<string, IEndPointCollection>();
-            
         }
 
         public void RegisterEndPoints(IEnumerable<IEndPointConfiguration> endPoints)

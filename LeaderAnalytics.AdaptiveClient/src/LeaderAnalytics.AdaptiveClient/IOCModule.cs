@@ -13,6 +13,7 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             base.Load(builder);
             builder.RegisterGeneric(typeof(ServiceClient<>)).As(typeof(IServiceClient<>)).InstancePerLifetimeScope();
+            builder.RegisterType<NetworkUtilities>().As<INetworkUtilities>();
             builder.RegisterType<InProcessEndPointValidator>().Keyed<IEndPointValidator>(EndPointType.InProcess);
             builder.RegisterType<HttpEndPointValidator>().Keyed<IEndPointValidator>(EndPointType.WCF);
             builder.RegisterType<HttpEndPointValidator>().Keyed<IEndPointValidator>(EndPointType.REST);

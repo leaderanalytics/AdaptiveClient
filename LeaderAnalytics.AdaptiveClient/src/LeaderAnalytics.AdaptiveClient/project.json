@@ -2,7 +2,7 @@
   "copyright": "Sam Wheat",
   "description": "Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints",
   "title": "LeaderAnalytics.AdaptiveClient",
-  "version": "1.0.0-*",
+  "version": "0.0.1-*",
 
   "dependencies": {
     "Autofac": "4.2.1",
