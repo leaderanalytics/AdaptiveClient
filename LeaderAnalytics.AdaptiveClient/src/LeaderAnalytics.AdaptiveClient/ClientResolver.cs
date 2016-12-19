@@ -11,19 +11,19 @@ namespace LeaderAnalytics.AdaptiveClient
         private Func<Type, IEndPointCollection> epcFactory;
         private Func<EndPointType, T> serviceFactory;
         private Func<EndPointType, IEndPointValidator> validatorFactory;
-        private EndPointContext endPointInstance;
+        private EndPointContext endPointContext;
 
         public ClientResolver(
             Func<Type, IEndPointCollection> epcFactory,
             Func<EndPointType, T> serviceFactory,
             Func<EndPointType, IEndPointValidator> validatorFactory,
-            EndPointContext endPointInstance
+            EndPointContext endPointContext
             )
         {
             this.epcFactory = epcFactory;
             this.serviceFactory = serviceFactory;
             this.validatorFactory = validatorFactory;
-            this.endPointInstance = endPointInstance;
+            this.endPointContext = endPointContext;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace LeaderAnalytics.AdaptiveClient
                     continue;
 
                 // must set CurrentEndPoint before calling serviceFactory
-                endPointInstance.CurrentEndPoint = endPoint;
+                endPointContext.CurrentEndPoint = endPoint;
                 client = serviceFactory(endPoint.EndPointType);
 
                 if (client == null)

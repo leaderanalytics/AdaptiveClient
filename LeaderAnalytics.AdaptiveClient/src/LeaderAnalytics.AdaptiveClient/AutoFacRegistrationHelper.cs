@@ -41,7 +41,7 @@ namespace LeaderAnalytics.AdaptiveClient
         /// <typeparam name="TInterface">Interface of service i.e. IOrdersService</typeparam>
         /// <param name="endPointType">Type of client that will access this service i.e. REST, InProcess, WCF</param>
         /// <param name="endPointCollectionName">Name of server collection that exposes TInterface</param>
-        public IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterService<TService, TInterface>(EndPointType endPointType, string endPointCollectionName)
+        public IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> Register<TService, TInterface>(EndPointType endPointType, string endPointCollectionName)
         {
             RegisterEndPointCollection(typeof(TInterface), endPointCollectionName);
             

@@ -16,7 +16,7 @@ namespace LeaderAnalytics.AdaptiveClient
             this.container = container;
         }
 
-        public void Try(Action<T> method, params string[] endPointNames)
+        public void Call(Action<T> method, params string[] endPointNames)
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
@@ -26,7 +26,7 @@ namespace LeaderAnalytics.AdaptiveClient
             }
         }
 
-        public TResult Try<TResult>(Func<T, TResult> method, params string[] endPointNames)
+        public TResult Call<TResult>(Func<T, TResult> method, params string[] endPointNames)
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
@@ -36,7 +36,7 @@ namespace LeaderAnalytics.AdaptiveClient
             }
         }
 
-        public async Task TryAsync(Func<T, Task> method, params string[] endPointNames)
+        public async Task CallAsync(Func<T, Task> method, params string[] endPointNames)
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
@@ -46,7 +46,7 @@ namespace LeaderAnalytics.AdaptiveClient
             }
         }
 
-        public async Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> method, params string[] endPointNames)
+        public async Task<TResult> CallAsync<TResult>(Func<T, Task<TResult>> method, params string[] endPointNames)
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {

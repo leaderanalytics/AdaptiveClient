@@ -9,6 +9,6 @@ namespace LeaderAnalytics.AdaptiveClient
     public interface IRegistrationHelper
     {
         void RegisterEndPoints(IEnumerable<IEndPointConfiguration> endPoints);
-        IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> RegisterService<TService, TInterface>(EndPointType endPointType, string endPointCollectionName);     
+        IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> Register<TService, TInterface>(EndPointType endPointType, string endPointCollectionName);     
     }
 }
