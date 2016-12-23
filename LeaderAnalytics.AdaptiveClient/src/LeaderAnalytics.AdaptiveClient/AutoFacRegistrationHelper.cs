@@ -30,7 +30,7 @@ namespace LeaderAnalytics.AdaptiveClient
             // Do not register endpoints with the container.  A list of endpoints is available
             // when an EndPointCollection is resolved.
             
-            foreach (var endPointCollection in endPoints.GroupBy(x => x.Collection_Name))
+            foreach (var endPointCollection in endPoints.GroupBy(x => x.Application_Name))
                 EndPointDict.Add(endPointCollection.Key, new EndPointCollection(endPointCollection.Key, endPointCollection.ToList()));
         }
 

@@ -8,7 +8,7 @@ namespace LeaderAnalytics.AdaptiveClient
     public class EndPointConfiguration : IEndPointConfiguration
     {
         public string Name { get; set; }
-        public string Collection_Name { get; set; }
+        public string Application_Name { get; set; }
         public int Preference { get; set; }
         public EndPointType EndPointType { get; set; }
         public string ConnectionString { get; set; }

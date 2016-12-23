@@ -7,6 +7,7 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     public interface IServiceClient<T> where T : class, IDisposable
     {
+        IEndPointConfiguration CurrentEndPoint { get; }
         void Call(Action<T> method, params string[] endPointNames);
         TResult Call<TResult>(Func<T, TResult> method, params string[] endPointNames);
         Task CallAsync(Func<T, Task> method, params string[] endPointNames);

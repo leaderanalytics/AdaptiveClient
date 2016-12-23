@@ -1,8 +1,8 @@
 {
   "copyright": "Sam Wheat",
-  "description": "Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints",
+  "description": "Lightweight client that allows your application to dynamically resolve and use any available database, REST, WCF, or ESB endpoint at run time.",
   "title": "LeaderAnalytics.AdaptiveClient",
-  "version": "0.0.1-*",
+  "version": "0.0.3-*",
 
   "dependencies": {
     "Autofac": "4.2.1",
@@ -29,7 +29,7 @@
   },
   "authors": [ "Leader Analytics" ],
   "packOptions": {
-    "summary": "Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints",
+    "summary": "Lightweight client that allows your application to dynamically resolve and use any available database, REST, WCF, or ESB endpoint at run time.",
     "tags": [ "REST", "WCF", "AutoFac", "Entity Framework", "Leader Analytics" ],
     "owners": [ "Sam Wheat" ],
     "releaseNotes": "See Repository",

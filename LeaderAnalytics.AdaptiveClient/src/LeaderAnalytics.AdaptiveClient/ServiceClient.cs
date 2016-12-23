@@ -7,8 +7,13 @@ using Autofac;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
+
+    // Todo:  Some redundant code here - need to refactor.  We don't want the consumer of this class to have to 
+    // deal with disposing of it. 
+
     public class ServiceClient<T> : IServiceClient<T> where T : class, IDisposable
     {
+        public IEndPointConfiguration CurrentEndPoint { get; private set; }
         private ILifetimeScope container;
 
         public ServiceClient(ILifetimeScope container)
@@ -22,6 +27,7 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
                 T client = resolver.ResolveClient(endPointNames);
+                CurrentEndPoint = resolver.CurrentEndPoint;
                 method(client);
             }
         }
@@ -32,6 +38,7 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
                 T client = resolver.ResolveClient(endPointNames);
+                CurrentEndPoint = resolver.CurrentEndPoint;
                 return method(client);
             }
         }
@@ -42,6 +49,7 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
                 T client = resolver.ResolveClient(endPointNames);
+                CurrentEndPoint = resolver.CurrentEndPoint;
                 await method(client);
             }
         }
@@ -52,6 +60,7 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
                 T client = resolver.ResolveClient(endPointNames);
+                CurrentEndPoint = resolver.CurrentEndPoint;
                 return await method(client);
             }
         }

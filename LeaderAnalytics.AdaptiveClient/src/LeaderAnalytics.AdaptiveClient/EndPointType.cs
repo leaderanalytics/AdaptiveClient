@@ -9,6 +9,7 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         InProcess,
         REST,
-        WCF
+        WCF,
+        ESB
     }
 }
