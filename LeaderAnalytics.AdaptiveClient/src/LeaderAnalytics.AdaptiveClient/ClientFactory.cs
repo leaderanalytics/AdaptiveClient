@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public class ClientResolver<T> : IClientResolver<T>
+    public class ClientFactory<T> : IClientFactory<T>
     {
-        private Func<Type, IEndPointCollection> epcFactory;
+        private Func<Type, IPerimeter> epcFactory;
         private Func<EndPointType, T> serviceFactory;
         private Func<EndPointType, IEndPointValidator> validatorFactory;
         private EndPointContext endPointContext;
         public IEndPointConfiguration CurrentEndPoint { get; private set; }
 
-        public ClientResolver(
-            Func<Type, IEndPointCollection> epcFactory,
+        public ClientFactory(
+            Func<Type, IPerimeter> epcFactory,
             Func<EndPointType, T> serviceFactory,
             Func<EndPointType, IEndPointValidator> validatorFactory,
             EndPointContext endPointContext
@@ -33,20 +33,20 @@ namespace LeaderAnalytics.AdaptiveClient
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public virtual T ResolveClient(params string[] overrideNames)
+        public virtual T Create(params string[] overrideNames)
         {
             endPointContext.CurrentEndPoint = CurrentEndPoint = null;
             T client = default(T);
-            IEndPointCollection epc = epcFactory(typeof(T));
+            IPerimeter perimeter = epcFactory(typeof(T));
             IEnumerable<IEndPointConfiguration> endPoints;
 
-            if (epc == null)
+            if (perimeter == null)
                 return client;
 
             if (overrideNames != null && overrideNames.Any())
-                endPoints = epc.EndPoints.Where(x => overrideNames.Any(o => x.Name == o));
+                endPoints = perimeter.EndPoints.Where(x => overrideNames.Any(o => x.Name == o));
             else
-                endPoints = epc.EndPoints;
+                endPoints = perimeter.EndPoints;
 
             foreach (IEndPointConfiguration endPoint in endPoints)
             {

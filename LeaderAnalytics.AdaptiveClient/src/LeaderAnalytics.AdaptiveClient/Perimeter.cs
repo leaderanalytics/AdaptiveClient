@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public class EndPointCollection : IEndPointCollection
+    public class Perimeter : IPerimeter
     {
-        public string Collection_Name { get { return collection_name; } }
+        public string API_Name { get { return application_name; } }
         public IList<IEndPointConfiguration> EndPoints { get { return _endPoints; } }
 
-        private string collection_name;
+        private string application_name;
         private IList<IEndPointConfiguration> _endPoints;
 
-        public EndPointCollection(string collection_name, IList<IEndPointConfiguration> endPoints)
+        public Perimeter(string collection_name, IList<IEndPointConfiguration> endPoints)
         {
-            this.collection_name = collection_name;
+            this.application_name = collection_name;
             _endPoints = endPoints.OrderBy(x => x.Preference).ToList();
         }
     }
