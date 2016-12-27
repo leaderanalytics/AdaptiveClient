@@ -10,7 +10,7 @@ namespace LeaderAnalytics.AdaptiveClient
     public class AutofacRegistrationHelper : IRegistrationHelper
     {
         private ContainerBuilder builder;
-        private Dictionary<string, IEndPointCollection> EndPointDict;
+        private Dictionary<string, IPerimeter> EndPointDict;
 
         public AutofacRegistrationHelper(ContainerBuilder builder)
         {
@@ -18,20 +18,20 @@ namespace LeaderAnalytics.AdaptiveClient
                 throw new ArgumentNullException("builder");
 
             this.builder = builder;
-            builder.RegisterModule(new IOCModule());
-            EndPointDict = new Dictionary<string, IEndPointCollection>();
+            builder.RegisterModule(new AutofacModule());
+            EndPointDict = new Dictionary<string, IPerimeter>();
         }
 
         public void RegisterEndPoints(IEnumerable<IEndPointConfiguration> endPoints)
         {
             if (endPoints == null)
-                return;
+                throw new ArgumentNullException("endPoints");
             
             // Do not register endpoints with the container.  A list of endpoints is available
             // when an EndPointCollection is resolved.
             
-            foreach (var endPointCollection in endPoints.GroupBy(x => x.Application_Name))
-                EndPointDict.Add(endPointCollection.Key, new EndPointCollection(endPointCollection.Key, endPointCollection.ToList()));
+            foreach (var endPointCollection in endPoints.GroupBy(x => x.API_Name))
+                EndPointDict.Add(endPointCollection.Key, new Perimeter(endPointCollection.Key, endPointCollection.ToList()));
         }
 
         /// <summary>
@@ -54,6 +54,9 @@ namespace LeaderAnalytics.AdaptiveClient
                     IComponentContext cxt = c.Resolve<IComponentContext>();
                     Func<IEndPointConfiguration> epfactory = cxt.Resolve<Func<IEndPointConfiguration>>();
                     IEndPointConfiguration ep = epfactory();
+
+                    // Todo: need to resolve ChannelFactory
+
                     return s => 
                     new ChannelFactory<TInterface>(
                         new BasicHttpBinding(),
@@ -71,13 +74,13 @@ namespace LeaderAnalytics.AdaptiveClient
         /// <param name="endPointCollectionName">Name of EndPoint Collection that implements passed service interface</param>
         private void RegisterEndPointCollection(Type serviceInterface, string endPointCollectionName)
         {
-            IEndPointCollection epc;
+            IPerimeter epc;
             EndPointDict.TryGetValue(endPointCollectionName, out epc);
 
             if (epc == null)
                 throw new Exception($"An EndPointCollection named {endPointCollectionName} was not found.  Call the RegisterEndPoints method before calling RegisterService with an EndPointCollection name. Also check your spelling Sam.");
 
-            builder.RegisterInstance<IEndPointCollection>(epc).Keyed<IEndPointCollection>(serviceInterface);
+            builder.RegisterInstance<IPerimeter>(epc).Keyed<IPerimeter>(serviceInterface);
         }
     }
 }

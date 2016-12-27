@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public interface IEndPointCollection
+    public interface IPerimeter
     {
-        string Collection_Name { get; }
+        string API_Name { get; }
         IList<IEndPointConfiguration> EndPoints { get; }
     }
 }

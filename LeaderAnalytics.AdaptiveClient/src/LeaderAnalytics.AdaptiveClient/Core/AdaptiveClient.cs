@@ -4,19 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 
-
-namespace LeaderAnalytics.AdaptiveClient
+namespace LeaderAnalytics.AdaptiveClient.Core
 {
 
-    // Todo:  Some redundant code here - need to refactor.  We don't want the consumer of this class to have to 
+    // Todo:  Some redundant code here - need to refactor.  Dont want to implement IDisposable we don't want the consumer of this class to have to 
     // deal with disposing of it. 
 
-    public class ServiceClient<T> : IServiceClient<T> where T : class, IDisposable
+    public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class, IDisposable
     {
         public IEndPointConfiguration CurrentEndPoint { get; private set; }
         private ILifetimeScope container;
 
-        public ServiceClient(ILifetimeScope container)
+        public AdaptiveClient(ILifetimeScope container)
         {
             this.container = container;
         }
@@ -25,9 +24,9 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
-                IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
-                T client = resolver.ResolveClient(endPointNames);
-                CurrentEndPoint = resolver.CurrentEndPoint;
+                IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
+                T client = factory.Create(endPointNames);
+                CurrentEndPoint = factory.CurrentEndPoint;
                 method(client);
             }
         }
@@ -36,9 +35,9 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
-                IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
-                T client = resolver.ResolveClient(endPointNames);
-                CurrentEndPoint = resolver.CurrentEndPoint;
+                IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
+                T client = factory.Create(endPointNames);
+                CurrentEndPoint = factory.CurrentEndPoint;
                 return method(client);
             }
         }
@@ -47,9 +46,9 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
-                IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
-                T client = resolver.ResolveClient(endPointNames);
-                CurrentEndPoint = resolver.CurrentEndPoint;
+                IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
+                T client = factory.Create(endPointNames);
+                CurrentEndPoint = factory.CurrentEndPoint;
                 await method(client);
             }
         }
@@ -58,9 +57,9 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
-                IClientResolver<T> resolver = scope.Resolve<IClientResolver<T>>();
-                T client = resolver.ResolveClient(endPointNames);
-                CurrentEndPoint = resolver.CurrentEndPoint;
+                IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
+                T client = factory.Create(endPointNames);
+                CurrentEndPoint = factory.CurrentEndPoint;
                 return await method(client);
             }
         }

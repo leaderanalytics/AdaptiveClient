@@ -1,8 +1,8 @@
 {
   "copyright": "Sam Wheat",
-  "description": "Lightweight client that allows your application to dynamically resolve and use any available database, HTTP, WCF, or ESB endpoint at run time.",
+  "description": "A pattern to resolve and use any available database, REST, WCF, or ESB endpoint on the fly at run time with a single call.",
   "title": "LeaderAnalytics.AdaptiveClient",
-  "version": "0.0.3-*",
+  "version": "0.0.5-*",
 
   "dependencies": {
     "Autofac": "4.2.1",
@@ -29,8 +29,8 @@
   },
   "authors": [ "Leader Analytics" ],
   "packOptions": {
-    "summary": "Lightweight client that allows your application to dynamically resolve and use any available database, HTTP, WCF, or ESB endpoint at run time.",
-    "tags": [ "HTTP", "WCF", "AutoFac", "Entity Framework", "Leader Analytics" ],
+    "summary": "A pattern to resolve and use any available database, REST, WCF, or ESB endpoint on the fly at run time with a single call.",
+    "tags": [ "Leader Analytics", "LeaderAnalytics", "AdaptiveClient", "Adaptive Client", "Repository", "MVC", "MVVM", "REST", "WCF", "AutoFac", "Entity Framework" ],
     "owners": [ "Sam Wheat" ],
     "releaseNotes": "See Repository",
     "iconUrl": "https://static-s.aa-cdn.net/img/ios/776959045/458370cf178aacd41bc6cf251dd4bd68?v=1",

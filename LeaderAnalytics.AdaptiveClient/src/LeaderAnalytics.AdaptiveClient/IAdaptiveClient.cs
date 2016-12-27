@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public interface IServiceClient<T> where T : class, IDisposable
+    public interface IAdaptiveClient<T> where T : class, IDisposable
     {
         IEndPointConfiguration CurrentEndPoint { get; }
         void Call(Action<T> method, params string[] endPointNames);
