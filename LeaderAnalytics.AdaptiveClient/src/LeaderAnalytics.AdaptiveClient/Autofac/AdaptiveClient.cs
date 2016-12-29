@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 
-namespace LeaderAnalytics.AdaptiveClient.Core
+namespace LeaderAnalytics.AdaptiveClient.Autofac
 {
 
     // Todo:  Some redundant code here - need to refactor.  Dont want to implement IDisposable we don't want the consumer of this class to have to 
