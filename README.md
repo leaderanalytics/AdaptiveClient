@@ -18,9 +18,10 @@ public class HomeController : Controller
     }
 }
 ```
-&nbsp;
+
 ---
 ### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
+
 ---
 
 
