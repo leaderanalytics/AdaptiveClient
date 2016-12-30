@@ -1,5 +1,5 @@
 # AdaptiveClient
-A pattern and utility classes to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
+Pattern and utility classes to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
 ```csharp
 public class HomeController : Controller
 {
@@ -19,12 +19,14 @@ public class HomeController : Controller
 }
 ```
 
----
-### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
+&nbsp;
 
 ---
+#### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
 
+---
 
+&nbsp;
 
 
 
@@ -112,3 +114,10 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  registrationHelper.Register<MyApp.WCFClient.UsersClient, IUsersService>(EndPointType.WCF, apiName);
  ```
  &nbsp;
+
+ 
+---
+#### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
+
+---
+
