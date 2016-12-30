@@ -18,10 +18,12 @@ public class HomeController : Controller
     }
 }
 ```
+&nbsp;
+---
+### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
+---
 
-<div style="background-color:lightgreen;padding:10px;margin-top:30px;margin-bottom:30px;">
-    <a href="https://github.com/leaderanalytics/AdaptiveClientDemo">Check out the end-to-end demo here</a>
-</div>
+
 
 
 
