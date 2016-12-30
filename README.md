@@ -97,11 +97,11 @@ registrationHelper.RegisterEndPoints(endPoints);
 
  ```csharp
  string apiName = "OurCompanyAPI";
- // client that communicates directly with the database
- registrationHelper.Register<AssemblyA.UsersService, IUsersService>(EndPointType.InProcess, apiName);
- // WebAPI client
- registrationHelper.Register<AssemblyB.UsersService, IUsersService>(EndPointType.WebAPI, apiName);
- // WCF client
- registrationHelper.Register<AssemblyC.UsersService, IUsersService>(EndPointType.WCF, apiName);
+ // client that communicates directly with the database (the service itself)
+ registrationHelper.Register<MyApp.Services.UsersService, IUsersService>(EndPointType.InProcess, apiName);
+ // WebAPI client 
+ registrationHelper.Register<MyApp.WebAPIClient.UsersClient, IUsersService>(EndPointType.WebAPI, apiName);
+ // WCF client 
+ registrationHelper.Register<MyApp.WCFClient.UsersClient, IUsersService>(EndPointType.WCF, apiName);
  ```
  &nbsp;
