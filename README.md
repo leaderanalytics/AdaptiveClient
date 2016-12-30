@@ -1,5 +1,5 @@
 # AdaptiveClient
-A pattern and lightweight client to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
+A pattern and utility classes to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
 ```csharp
 public class HomeController : Controller
 {
@@ -13,7 +13,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Login(int userID)
     {
         // use an in-process connection to the database if its available otherwise use
-        // a WebAPI server:
+        // whatever server is available to handle the request (WebAPI, WCF, etc.):
         User user = await client.CallAsync(x => x.GetUser(userID));
     }
 }
