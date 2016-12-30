@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>LeaderAnalytics.AdaptiveClient</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Sam Wheat</authors>
+    <owners>Sam Wheat</owners>
+    <licenseUrl>https://github.com/leaderanalytics/AdaptiveClient</licenseUrl>
+    <projectUrl>https://github.com/leaderanalytics/AdaptiveClient</projectUrl>
+    <iconUrl>https://upload.wikimedia.org/wikipedia/commons/5/55/Joomla_Shiny_Icon.svg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints</description>
+    <releaseNotes>Beta.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>WebAPI WCF AutoFac Entity Framework</tags>
+  </metadata>
+</package>
