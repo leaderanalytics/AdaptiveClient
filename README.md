@@ -43,7 +43,7 @@ An `EndPointConfiguration` is like a connection string or a URL but it includes 
 * **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
 * **Preference**:  Number that allows ClientFactory to rank this EndPoint.  Lower numbers are ranked higher (more preferred).
 * **EndPointType**:  May be one of the following:  InProcess, WebAPI, WCF, ESB.  Assists ClientFactory in determining if the EndPoint is alive.  Multiple EndPointConfigurations of the same `EndPointType` may be defined for an API_Name.
-* **ConnectionString**:  Valid connection string OR URL if pointing to an WebAPI server.
+* **ConnectionString**:  Valid connection string OR URL if pointing to a HTTP server.
 * **Parameters**:  Not used at this time.
 * **IsActive**:  Set this value to false to prevent using this `EndPointConfiguration`.
 
@@ -83,16 +83,15 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  
 1. Register the entire collection of `EndPointConfiguration` objects for an API or Application:
 
- ```csharp
-RegistrationHelper registrationHelper = new RegistrationHelper(builder);
-IEnumerable<IEndPointConfiguration> endPoints = ... // read endpoints from config file 
-registrationHelper.RegisterEndPoints(endPoints);
-```
-
-* `EndPointConfiguration` objects must be registered **before** clients are registered.
-* `RegistrationHelper` only registers clients and `EndPointConfiguration` objects.  You must register other objects in your application as you normally do using your DI container.
-* You are responsible for checking the IsActive flag before passing the collection to `RegistrationHelper`.
- 
+  ```csharp
+ RegistrationHelper registrationHelper = new RegistrationHelper(builder);
+ IEnumerable<IEndPointConfiguration> endPoints = ... // read endpoints from config file 
+ registrationHelper.RegisterEndPoints(endPoints);
+ ```
+  
+ * `EndPointConfiguration` objects must be registered **before** clients are registered.
+ * `RegistrationHelper` only registers clients and `EndPointConfiguration` objects.  You must register other objects in your application as you normally do using your DI container.
+  
 2. Register each combination of client and `EndPointType` that is implemented by your application.    Three examples are shown below but only EndPointTypes you actually use are required.      
 
  ```csharp
