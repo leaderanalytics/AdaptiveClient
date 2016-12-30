@@ -19,6 +19,11 @@ public class HomeController : Controller
 }
 ```
 
+<div style="background-color:lightgreen;padding:10px;margin-top:30px;margin-bottom:30px;">
+    <a href="https://github.com/leaderanalytics/AdaptiveClientDemo">Check out the end-to-end demo here</a>
+</div>
+
+
 
 ## What it does
 Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site AdaptiveClient will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, AdaptiveClient may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
