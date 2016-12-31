@@ -73,6 +73,9 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 `AdaptiveClient`  is the second of the two Autofac-specific classes.  AdaptiveClient is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the AdaptiveClient pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
 
 
+![alt an image](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/AdaptiveClient/docs/HowAdaptiveClientWorks.PNG)
+
+
 
 ## Getting started
 
