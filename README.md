@@ -83,10 +83,10 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 
 
 
-1. Define your `EndPointConfigurations`.  See appsettings.development.json in WebAPIServer project of the Demo application.
+1. Define your `EndPointConfiguration` objects.  See appsettings.development.json in WebAPIServer project of the Demo application.
 
 
-2. Register your `EndPointConfigurations`. Use RegistrationHelper as shown in the section below.
+2. Register your `EndPointConfiguration` objects. Use RegistrationHelper as shown in the section below.
 
 3. Register your domain services and clients as shown in the section below.  See also the AdaptiveClientModule file in the Application.Services project of the Demo application.  
 
