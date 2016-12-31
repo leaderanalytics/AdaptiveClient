@@ -123,8 +123,14 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
 ## Tips & FAQs
 
 * AdaptiveClient is designed to work with an n-tier architecture. Make sure your application has clean separation of layers. Generally this means your business logic should reside entirely in your service layer - not in controllers, code-behind, or view models.
+
 * Create clients in their own assemblies as required.  Clients must implement the same interfaces as their server counterparts and the services they access.  Register clients the same way services are registered.  See the Application.WebAPIClient project for an example.
 
+* Will AdaptiveClient make multiple hops to resolve a client? Yes, see the demo at the link below.
+
+* Can I force AdaptiveClient to use a certain EndPoint and bypass the fallback logic? Yes. You can set the IsActive flag to false for EndPointConfigurations you dont want to use.  You can also supply one or more EndPoint names in your call to AdaptiveClient or ClientFactory:
+
+      User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
 
 ---
 #### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
