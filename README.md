@@ -86,7 +86,7 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 1. Define your `EndPointConfigurations`.  See appsettings.development.json in WebAPIServer project of the Demo application.
 2. Register your `EndPointConfigurations`. Use RegistrationHelper as shown in the section below.
 3. Register your domain services and clients as shown in the section below.  See also the AdaptiveClientModule file in the Application.Services project of the Demo application.  
-4. Accept 'IAdaptiveClient<T>' or 'IClientFactory<T>' in your constructor wherever you need a client.  IAdaptiveClient is the same as IClientFactory except it disposes the objects it creats within the Call method.
+4. Accept `IAdaptiveClient<T>` or `IClientFactory<T>` in your constructor wherever you need a client.  IAdaptiveClient is the same as IClientFactory except it disposes the objects it creats within the Call method.
 
 #### Using `RegistrationHelper`
 Follow the two steps below to register your `EndPointConfiguration` objects and clients.
