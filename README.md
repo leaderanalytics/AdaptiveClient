@@ -91,4 +91,3 @@ registrationHelper.RegisterEndPoints(endPoints);
 3. Define your EndPointConfigurations.  See the Demo application.
 4. Its a good idea to put your Models and your Domain layer in their own assemblies.  Interfaces belong in the Domain layer (IOrdersService, IProductService, etc).
 5. Create your Service layer in its own assembly (or assemblies).  Implement the interfaces defined your Domain layer.  Register your servers as shown in the Demo application.  
-
