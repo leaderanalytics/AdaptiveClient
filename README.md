@@ -89,7 +89,6 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 #### Using `RegistrationHelper`
 Follow the two steps below to register your `EndPointConfiguration` objects and clients.
 
-
  
 1. Register the entire collection of `EndPointConfiguration` objects for an API or Application:
 
