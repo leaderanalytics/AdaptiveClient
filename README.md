@@ -47,7 +47,7 @@ The functionality provided by AdaptiveClient comes primarily from the four class
 
     EndPointConfiguration
 
-An `EndPointConfiguration` is like a connection string or a URL but it includes some extra properties that are useful:
+An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection string or a URL but it includes some extra properties that are useful:
 
 * **Name**: Name of the EndPoint: DevServer01, QASloth02, etc.
 * **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
@@ -73,6 +73,8 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 `AdaptiveClient`  is the second of the two Autofac-specific classes.  AdaptiveClient is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the AdaptiveClient pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
 
 
+##### Steps required to resolve an interface to a concrete implementation: 
+
 ![alt an image](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/HowAdaptiveClientWorks.png)
 
 
@@ -81,13 +83,10 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 
 
 
-1. AdaptiveClient is designed to work with an n-tier architecture.  Make sure your application has clean separation of layers.  Generally this means your business logic should reside entirely in your service layer.
-2. Define your EndPointConfigurations.  See appsettings.development.json in WebAPIServer project of the Demo application.
-3. Its a good idea to put your domain services, domain models, and domain interfaces in their own individual assemblies. 
-5. Register your domain services as shown in the `AdaptiveClientModule` file in the Application.Services project of the Demo application.  
-6. Create clients in their own assemblies as required.  Clients must implement the same interfaces as their server counterparts and the services they access.  Register clients the same way services are registered.  See the Application.WebAPIClient project for an example.
-7. Create API servers as required.  See the WCFServer and the WebAPIServer projects in the Demo application.  Note that controllers in the WebAPIServer example implement domain interfaces even though it is not technically required to do so.
-8. Create your presentation layer.  Applications can be Web, WPF, Xamarin, Winforms, etc.  See the WebApplication and WPFApplication examples in the Demo.  
+1. Define your `EndPointConfigurations`.  See appsettings.development.json in WebAPIServer project of the Demo application.
+2. Register your `EndPointConfigurations`. Use RegistrationHelper as shown in the section below.
+3. Register your domain services and clients as shown in the section below.  See also the AdaptiveClientModule file in the Application.Services project of the Demo application.  
+4. Accept 'IAdaptiveClient<T>' or 'IClientFactory<T>' in your constructor wherever you need a client.  IAdaptiveClient is the same as IClientFactory except it disposes the objects it creats within the Call method.
 
 #### Using `RegistrationHelper`
 Follow the two steps below to register your `EndPointConfiguration` objects and clients.
@@ -104,7 +103,7 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  * `EndPointConfiguration` objects must be registered **before** clients are registered.
  * `RegistrationHelper` only registers clients and `EndPointConfiguration` objects.  You must register other objects in your application as you normally do using your DI container.
   
-2. Register each combination of client and `EndPointType` that is implemented by your application.    Three examples are shown below but only EndPointTypes you actually use are required.      
+2. Register each combination of client and `EndPointType` that is implemented by your application.  Three examples are shown below but only EndPointTypes you actually use are required.      
 
  ```C#
  string apiName = "OurCompanyAPI";
@@ -117,7 +116,12 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  ```
  &nbsp;
 
- 
+## Tips & FASs
+
+* AdaptiveClient is designed to work with an n-tier architecture. Make sure your application has clean separation of layers. Generally this means your business logic should reside entirely in your service layer - not in controllers, code-behind, or view models.
+* Create clients in their own assemblies as required.  Clients must implement the same interfaces as their server counterparts and the services they access.  Register clients the same way services are registered.  See the Application.WebAPIClient project for an example.
+
+
 ---
 #### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
 
