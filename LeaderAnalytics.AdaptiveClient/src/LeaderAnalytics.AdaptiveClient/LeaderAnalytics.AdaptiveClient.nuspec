@@ -13,6 +13,6 @@
     <description>Lightweight client that allows your application to seamlessly connect to database, REST, or WCF endpoints</description>
     <releaseNotes>Beta.</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>REST WCF AutoFac Entity Framework</tags>
+    <tags>WebAPI WCF AutoFac Entity Framework</tags>
   </metadata>
 </package>

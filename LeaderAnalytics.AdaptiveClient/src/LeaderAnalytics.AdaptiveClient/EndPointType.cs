@@ -8,8 +8,10 @@ namespace LeaderAnalytics.AdaptiveClient
     public enum EndPointType
     {
         InProcess,
-        REST,
+        WebAPI,
         WCF,
-        ESB
+        ESB,
+        File,
+        FTP
     }
 }

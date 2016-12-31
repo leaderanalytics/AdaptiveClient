@@ -13,5 +13,6 @@ namespace LeaderAnalytics.AdaptiveClient
         EndPointType EndPointType { get; set; }
         string ConnectionString { get; set; }
         Dictionary<string, string> Parameters { get; set; }
+        bool IsActive { get; set; }
     }
 }

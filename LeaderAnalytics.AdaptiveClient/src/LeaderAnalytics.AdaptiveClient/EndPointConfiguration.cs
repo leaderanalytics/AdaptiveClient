@@ -22,6 +22,6 @@ namespace LeaderAnalytics.AdaptiveClient
     }
 
     //public class InProcessEndPoint : EndPointConfiguration { }
-    //public class RESTEndPoint : EndPointConfiguration { }
+    //public class HTTPEndPoint : EndPointConfiguration { }
     //public class WCFEndPoint : EndPointConfiguration { }
 }

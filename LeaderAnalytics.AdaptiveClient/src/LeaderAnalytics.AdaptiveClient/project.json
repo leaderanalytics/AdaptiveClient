@@ -1,8 +1,8 @@
 {
   "copyright": "Sam Wheat",
-  "description": "A pattern to resolve and use any available database, REST, WCF, or ESB endpoint on the fly at run time with a single call.",
+  "description": "A pattern to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.",
   "title": "LeaderAnalytics.AdaptiveClient",
-  "version": "0.0.5-*",
+  "version": "0.0.8-*",
 
   "dependencies": {
     "Autofac": "4.2.1",
@@ -29,8 +29,8 @@
   },
   "authors": [ "Leader Analytics" ],
   "packOptions": {
-    "summary": "A pattern to resolve and use any available database, REST, WCF, or ESB endpoint on the fly at run time with a single call.",
-    "tags": [ "Leader Analytics", "LeaderAnalytics", "AdaptiveClient", "Adaptive Client", "Repository", "MVC", "MVVM", "REST", "WCF", "AutoFac", "Entity Framework" ],
+    "summary": "A pattern to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.",
+    "tags": [ "Leader Analytics", "LeaderAnalytics", "AdaptiveClient", "Adaptive Client", "Repository", "MVC", "MVVM", "HTTP", "WCF", "AutoFac", "Entity Framework" ],
     "owners": [ "Sam Wheat" ],
     "releaseNotes": "See Repository",
     "iconUrl": "https://static-s.aa-cdn.net/img/ios/776959045/458370cf178aacd41bc6cf251dd4bd68?v=1",
