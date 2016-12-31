@@ -1,6 +1,6 @@
 # AdaptiveClient
 Pattern and utility classes to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
-```csharp
+```C#
 public class HomeController : Controller
 {
     private IAdaptiveClient<IUsersService> client;
@@ -93,7 +93,7 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  
 1. Register the entire collection of `EndPointConfiguration` objects for an API or Application:
 
-  ```csharp
+  ```C#
  RegistrationHelper registrationHelper = new RegistrationHelper(builder);
  IEnumerable<IEndPointConfiguration> endPoints = ... // read endpoints from config file 
  registrationHelper.RegisterEndPoints(endPoints);
@@ -104,7 +104,7 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
   
 2. Register each combination of client and `EndPointType` that is implemented by your application.    Three examples are shown below but only EndPointTypes you actually use are required.      
 
- ```csharp
+ ```C#
  string apiName = "OurCompanyAPI";
  // client that communicates directly with the database (the service itself)
  registrationHelper.Register<MyApp.Services.UsersService, IUsersService>(EndPointType.InProcess, apiName);
