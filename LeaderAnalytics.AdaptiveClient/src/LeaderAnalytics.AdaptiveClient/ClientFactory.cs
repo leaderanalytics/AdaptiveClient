@@ -28,8 +28,9 @@ namespace LeaderAnalytics.AdaptiveClient
         }
 
         /// <summary>
-        /// Given a service interface (IOrdersService), we find a Perimeter that implements the interface.
-        /// Given the Perimeter, we find an EndPoint.
+        /// Given an interface, we find the Perimeter with whom the interface is registered.
+        /// Given the Perimeter, we find an EndPointConfiguration that is alive.
+        /// Given the EndPointType of
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>

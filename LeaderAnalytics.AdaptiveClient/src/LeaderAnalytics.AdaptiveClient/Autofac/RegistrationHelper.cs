@@ -27,10 +27,8 @@ namespace LeaderAnalytics.AdaptiveClient
             if (endPoints == null)
                 throw new ArgumentNullException("endPoints");
 
-            // Do not register endpoints with the container.  A list of endpoints is available
-            // when an Perimeter is resolved.
+            // Do not register endpoints with the container.  A list of endpoints is available when an Perimeter is resolved.
             endPoints = endPoints.Where(x => x.IsActive);
-
             ValidateEndPoints(endPoints);
 
             foreach (var perimeter in endPoints.GroupBy(x => x.API_Name))
@@ -38,13 +36,13 @@ namespace LeaderAnalytics.AdaptiveClient
         }
 
         /// <summary>
-        /// Registers a client.  Call RegisterEndPoints before calling this method.
+        /// Registers a client. Call RegisterEndPoints before calling this method.
         /// </summary>
-        /// <typeparam name="TService">Concrete class that implements TInterface i.e. OrdersService</typeparam>
+        /// <typeparam name="TClient">Concrete class that implements TInterface i.e. OrdersClient</typeparam>
         /// <typeparam name="TInterface">Interface of service i.e. IOrdersService</typeparam>
         /// <param name="endPointType">Type of client that will access this service i.e. WebAPI, InProcess, WCF</param>
-        /// <param name="api_name">Name of server collection that exposes TInterface</param>
-        public IRegistrationBuilder<TService, ConcreteReflectionActivatorData, SingleRegistrationStyle> Register<TService, TInterface>(EndPointType endPointType, string api_name)
+        /// <param name="api_name">API_Name of EndPointConfiguration objects  TInterface</param>
+        public IRegistrationBuilder<TClient, ConcreteReflectionActivatorData, SingleRegistrationStyle> Register<TClient, TInterface>(EndPointType endPointType, string api_name)
         {
             RegisterPerimeter(typeof(TInterface), api_name);
             
@@ -67,7 +65,7 @@ namespace LeaderAnalytics.AdaptiveClient
                         );
                 });
             }
-            return builder.RegisterType<TService>().Keyed<TInterface>(endPointType);
+            return builder.RegisterType<TClient>().Keyed<TInterface>(endPointType);
         }
 
         /// <summary>
