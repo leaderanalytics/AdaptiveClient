@@ -139,7 +139,7 @@ User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
 ```
 
 ---
-#### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
+#### [Get the end-to-end demo](https://github.com/leaderanalytics/AdaptiveClientDemo)
 
 ---
 
