@@ -35,18 +35,18 @@ public class HomeController : Controller
 
 
 ## What it does
-Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, AdaptiveClient may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
+Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
 
 ## Who will benefit from using it
-* AdaptiveClient is ideally targeted to organizations that need to consume their API using direct database connections over a LAN but who also wish to expose their API using a protocol such as HTTP or SOAP.
+* `AdaptiveClient` is ideally targeted to organizations that need to consume their API using direct database connections over a LAN but who also wish to expose their API using a protocol such as HTTP or SOAP.
 * Applications that consume an API exposed via multiple servers using dissimilar protocols will benefit.
 * Applications that need retry and/or fall back logic when making service calls will also benefit.
 
 
 ## How it works
-AdaptiveClient is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container.  The client and utility classes included in this download assist you in implementing the pattern.  This download includes a client implementation based on Autofac.  You should be able to implement similar functionality using other DI containers.  
+`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container.  The client and utility classes included in this download assist you in implementing the pattern.  This download includes a client implementation based on Autofac.  You should be able to implement similar functionality using other DI containers.  
 
-The functionality provided by AdaptiveClient comes primarily from the four classes shown below and their supporting classes:
+The functionality provided by `AdaptiveClient` comes primarily from the four classes shown below and their supporting classes:
 
 
     EndPointConfiguration
@@ -74,7 +74,7 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 
     AdaptiveClient
 
-`AdaptiveClient`  is the second of the two Autofac-specific classes.  AdaptiveClient is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the AdaptiveClient pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
+`AdaptiveClient`  is the second of the two Autofac-specific classes.  `AdaptiveClient` is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the `AdaptiveClient` pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
 
 
 ##### Steps required to resolve an interface to a concrete implementation: 
@@ -126,13 +126,13 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
 
 ## Tips & FAQs
 
-* AdaptiveClient is designed to work with an n-tier architecture. Make sure your application has clean separation of layers. Generally this means your business logic should reside entirely in your service layer - not in controllers, code-behind, or view models.
+* `AdaptiveClient` is designed to work with an n-tier architecture. Make sure your application has clean separation of layers. Generally this means your business logic should reside entirely in your service layer - not in controllers, code-behind, or view models.
 
 * Create clients in their own assemblies as required.  Clients must implement the same interfaces as their server counterparts and the services they access.  Register clients the same way services are registered.  See the Application.WebAPIClient project for an example.
 
-* Will AdaptiveClient make multiple hops to resolve a client? Yes, see the demo at the link below.
+* Will `AdaptiveClient` make multiple hops to resolve a client? Yes, see the demo at the link below.
 
-* Can I force AdaptiveClient to use a certain EndPoint and bypass the fallback logic? Yes. You can set the IsActive flag to false for EndPointConfigurations you dont want to use.  You can also supply one or more EndPoint names in your call to AdaptiveClient or ClientFactory:
+* Can I force `AdaptiveClient` to use a certain EndPoint and bypass the fallback logic? Yes. You can set the IsActive flag to false for EndPointConfigurations you dont want to use.  You can also supply one or more EndPoint names in your call to `AdaptiveClient` or ClientFactory:
 
 ```C#
 User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
