@@ -35,7 +35,7 @@ public class HomeController : Controller
 
 
 ## What it does
-Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site AdaptiveClient will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, AdaptiveClient may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
+Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, AdaptiveClient may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
 
 ## Who will benefit from using it
 * AdaptiveClient is ideally targeted to organizations that need to consume their API using direct database connections over a LAN but who also wish to expose their API using a protocol such as HTTP or SOAP.
@@ -134,7 +134,9 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
 
 * Can I force AdaptiveClient to use a certain EndPoint and bypass the fallback logic? Yes. You can set the IsActive flag to false for EndPointConfigurations you dont want to use.  You can also supply one or more EndPoint names in your call to AdaptiveClient or ClientFactory:
 
-      User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
+```C#
+User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
+```
 
 ---
 #### [Check out the end-to-end demo here](https://github.com/leaderanalytics/AdaptiveClientDemo)
