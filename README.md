@@ -1,5 +1,5 @@
 # AdaptiveClient
-Pattern and utility classes to resolve and use any available database, WebAPI, WCF, or ESB endpoint on the fly at run time with a single call.
+Pattern to resolve a database, WebAPI, WCF, or ESB client on the fly at run time.
 ```C#
 public class HomeController : Controller
 {
