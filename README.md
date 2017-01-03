@@ -1,5 +1,5 @@
 # AdaptiveClient
-#### A pattern to resolve a data access client based on network connectivity at run time.
+#### Pattern to resolve a data access client based on network connectivity at run time.
 
 ```C#
 public class HomeController : Controller
