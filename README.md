@@ -1,5 +1,6 @@
 # AdaptiveClient
-Pattern to resolve a database, WebAPI, WCF, or ESB client on the fly at run time.
+#### A pattern to resolve a data access client based on network connectivity at run time.
+
 ```C#
 public class HomeController : Controller
 {

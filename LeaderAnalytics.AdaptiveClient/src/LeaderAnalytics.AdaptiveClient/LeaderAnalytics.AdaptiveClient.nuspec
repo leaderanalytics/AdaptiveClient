@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/leaderanalytics/AdaptiveClient</projectUrl>
     <iconUrl>https://static-s.aa-cdn.net/img/ios/776959045/458370cf178aacd41bc6cf251dd4bd68?v=1</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Pattern to resolve a database, WebAPI, WCF, or ESB client on the fly at run time.</description>
+    <description>A pattern to resolve a data access client based on network connectivity at run time.</description>
     <releaseNotes>Beta.</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>Leader Analytics LeaderAnalytics AdaptiveClient Adaptive Client Repository MVVM MVC WebAPI WCF AutoFac Entity Framework </tags>
