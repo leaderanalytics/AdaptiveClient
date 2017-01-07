@@ -1,6 +1,6 @@
 {
   "copyright": "Sam Wheat",
-  "description": "A pattern to resolve a data access client based on network connectivity at run time.",
+  "description": "A pattern to dynamically resolve data access clients based on server availability.",
   "title": "LeaderAnalytics.AdaptiveClient",
   "version": "0.0.10-*",
 
@@ -29,7 +29,7 @@
   },
   "authors": [ "Leader Analytics" ],
   "packOptions": {
-    "summary": "A pattern to resolve a data access client based on network connectivity at run time.",
+    "summary": "A pattern to dynamically resolve data access clients based on server availability.",
     "tags": [ "Leader Analytics", "LeaderAnalytics", "AdaptiveClient", "Adaptive Client", "Repository", "MVC", "MVVM", "WebAPI", "WCF", "AutoFac", "Entity Framework" ],
     "owners": [ "Sam Wheat" ],
     "releaseNotes": "See Repository",

@@ -1,20 +1,21 @@
 # AdaptiveClient
-#### Pattern to resolve a data access client based on network connectivity at run time.
+#### Pattern to dynamically resolve data access clients based on server availability.
 
 ```C#
-public class HomeController : Controller
+public partial class MainWindow : Window
 {
     private IAdaptiveClient<IUsersService> client;
 
-    public HomeController(IAdaptiveClient<IUsersService> client)
+    public MainWindow(IAdaptiveClient<IUsersService> client)
     {
         this.client = client;
     }
 
     public async Task<IActionResult> Login(int userID)
     {
-        // use an in-process connection to the database if its available otherwise use
-        // whatever server is available to handle the request (WebAPI, WCF, etc.):
+        // AdaptiveClient will use an in-process connection to the database 
+        // server on the local area network if it is available.
+        // Otherwise it will fall back to another server that can handle the request (WebAPI, WCF, etc.):
         User user = await client.CallAsync(x => x.GetUser(userID));
     }
 }
@@ -36,12 +37,11 @@ public class HomeController : Controller
 
 
 ## What it does
-Rather than make calls directly to a specific type of server you make service calls using `AdaptiveClient` instead.  `AdaptiveClient` will make successive attempts to use the most preferred transport while falling back if a transport or server is unavailable.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance benefit of an in-process connection directly to the database server.  When the user is off-site `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
+Rather than make a service call directly to a specific server or type of server you make a call using `AdaptiveClient` instead.  `AdaptiveClient` will attempt to execute the call using the most preferred server.  If the call fails `AdaptiveClient` will make successive attempts, each time falling back to other servers of the same type or other types.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance of an in-process connection directly to the database server.  If the user tries to re-connect from a remote location `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
 
 ## Who will benefit from using it
-* `AdaptiveClient` is ideally targeted to organizations that need to consume their API using direct database connections over a LAN but who also wish to expose their API using a protocol such as HTTP or SOAP.
-* Applications that consume an API exposed via multiple servers using dissimilar protocols will benefit.
-* Applications that need retry and/or fall back logic when making service calls will also benefit.
+* `AdaptiveClient` is ideally targeted to organizations that need to give local users access to their APIs over a local area network but who also wish to expose their APIs to remote users.
+* Developers who want to implement retry and/or fall back logic when making service calls.
 
 
 ## How it works
@@ -78,7 +78,7 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 `AdaptiveClient`  is the second of the two Autofac-specific classes.  `AdaptiveClient` is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the `AdaptiveClient` pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
 
 
-##### Steps required to resolve an interface to a concrete implementation: 
+## How `AdaptiveClient` resolves a client from start to finish: 
 
 ![alt an image](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/HowAdaptiveClientWorks.png)
 
