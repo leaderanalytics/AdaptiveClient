@@ -1,0 +1,39 @@
+﻿{
+  "EndPointConfigurations": [
+    {
+      "Name": "Application_SQL1",
+      "IsActive": "true",
+      "API_Name": "DummyAPI1",
+      "Preference": "20",
+      "EndPointType": "InProcess",
+      "ConnectionString": "Data Source=.\\SQLEXPRESS;Initial Catalog=AdaptiveClientDemo;Integrated Security=True;MultipleActiveResultSets=True"
+    },
+
+    {
+      "Name": "Application_WebAPI1",
+      "IsActive": "true",
+      "API_Name": "DummyAPI1",
+      "Preference": "30",
+      "EndPointType": "WebAPI",
+      "ConnectionString": "http://localhost:61426/api/"
+    },
+
+    {
+      "Name": "Application_SQL2",
+      "IsActive": "true",
+      "API_Name": "DummyAPI2",
+      "Preference": "20",
+      "EndPointType": "InProcess",
+      "ConnectionString": "Data Source=.\\SQLEXPRESS;Initial Catalog=AdaptiveClientDemo;Integrated Security=True;MultipleActiveResultSets=True"
+    },
+
+    {
+      "Name": "Application_WebAPI2",
+      "IsActive": "true",
+      "API_Name": "DummyAPI2",
+      "Preference": "30",
+      "EndPointType": "WebAPI",
+      "ConnectionString": "http://localhost:61426/api/"
+    }
+  ]
+}

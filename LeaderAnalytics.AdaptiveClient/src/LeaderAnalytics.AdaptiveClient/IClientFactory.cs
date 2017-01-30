@@ -7,5 +7,6 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         IEndPointConfiguration CurrentEndPoint { get; }
         T Create(params string[] overrideNames);
+        void CallClient(Action evaluator, params string[] overrideNames)
     }
 }

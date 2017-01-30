@@ -8,6 +8,26 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     public class EndPointContext
     {
-        public IEndPointConfiguration CurrentEndPoint { get; set; }
+        private Dictionary<Type, IEndPointConfiguration> EndPoints;
+
+        public EndPointContext()
+        {
+            EndPoints = new Dictionary<Type, IEndPointConfiguration>();
+        }
+
+        public IEndPointConfiguration GetCurrentEndPoint<T>()
+        {
+            IEndPointConfiguration result = null;
+            EndPoints.TryGetValue(typeof(T), out result);
+            return result;
+        }
+
+        public void SetCurrentEndPoint<T>(IEndPointConfiguration endPoint)
+        {
+            if (endPoint == null)
+                throw new ArgumentNullException("endPoint");
+
+            EndPoints[typeof(T)] = endPoint;
+        }
     }
 }

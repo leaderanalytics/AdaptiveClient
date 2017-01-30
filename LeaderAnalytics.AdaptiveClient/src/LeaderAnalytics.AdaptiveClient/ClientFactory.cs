@@ -12,7 +12,18 @@ namespace LeaderAnalytics.AdaptiveClient
         private Func<EndPointType, T> serviceFactory;
         private Func<EndPointType, IEndPointValidator> validatorFactory;
         private EndPointContext endPointContext;
-        public IEndPointConfiguration CurrentEndPoint { get; private set; }
+        public IEndPointConfiguration CurrentEndPoint
+        {
+            get
+            {
+                return endPointContext.GetCurrentEndPoint<T>();
+            }
+
+            private set
+            {
+                endPointContext.SetCurrentEndPoint<T>(value);
+            }
+        }
 
         public ClientFactory(
             Func<Type, IPerimeter> epcFactory,
@@ -35,18 +46,27 @@ namespace LeaderAnalytics.AdaptiveClient
         /// <returns></returns>
         public virtual T Create(params string[] overrideNames)
         {
-            endPointContext.CurrentEndPoint = CurrentEndPoint = null;
+            if (CurrentEndPoint != null)
+            {
+                if (overrideNames == null || overrideNames.Contains(CurrentEndPoint.Name))
+                    return serviceFactory(CurrentEndPoint.EndPointType);
+            }
+
             T client = default(T);
             IPerimeter perimeter = epcFactory(typeof(T));
             IEnumerable<IEndPointConfiguration> endPoints;
 
             if (perimeter == null)
-                return client;
+                return NullClient();
 
             if (overrideNames != null && overrideNames.Any())
                 endPoints = perimeter.EndPoints.Where(x => overrideNames.Any(o => x.Name == o));
             else
                 endPoints = perimeter.EndPoints;
+
+            if (!endPoints.Any())
+                return NullClient();
+
 
             foreach (IEndPointConfiguration endPoint in endPoints)
             {
@@ -55,8 +75,8 @@ namespace LeaderAnalytics.AdaptiveClient
                 if (!validator.IsInterfaceAlive(endPoint))
                     continue;
 
-                // must set CurrentEndPoint before calling serviceFactory
-                endPointContext.CurrentEndPoint = CurrentEndPoint = endPoint;
+                CurrentEndPoint = endPoint;
+                endPointContext.SetCurrentEndPoint<T>(endPoint);
                 client = serviceFactory(endPoint.EndPointType);
 
                 if (client == null)
@@ -67,68 +87,66 @@ namespace LeaderAnalytics.AdaptiveClient
             return client;
         }
 
-
-        private T CreateClient(Func<T> evaluator, params string[] overrideNames)
+        public void CallClient(Action evaluator, params string[] overrideNames)
         {
-            endPointContext.CurrentEndPoint = CurrentEndPoint = null;
             T client = default(T);
             IPerimeter perimeter = epcFactory(typeof(T));
             IEnumerable<IEndPointConfiguration> endPoints;
 
             if (perimeter == null)
-                return client;
+                Hurl($"No EndPointConfigurationItems were registered to type {typeof(T).Name}", null);
 
             if (overrideNames != null && overrideNames.Any())
                 endPoints = perimeter.EndPoints.Where(x => overrideNames.Any(o => x.Name == o));
             else
                 endPoints = perimeter.EndPoints;
 
-            foreach (IEndPointConfiguration endPoint in endPoints)
+            if (!endPoints.Any())
+                Hurl($"No EndPointConfigurationItems were available to use for {typeof(T).Name}.  A possible reason for this exception is that no EndPointConfigurations were found with names that match the list of override names.", null);
+
+
+            // Make sure the current EndPoint, if any, exists in the registered EndPoint list after being filtered for overrides.
+            if (CurrentEndPoint != null && !endPoints.Any(x => x.Name == CurrentEndPoint.Name))
+                CurrentEndPoint = null;
+
+            bool isClientFound = false;
+
+            while (! isClientFound)
             {
-                // must set CurrentEndPoint before calling serviceFactory
-                endPointContext.CurrentEndPoint = CurrentEndPoint = endPoint;
-                client = serviceFactory(endPoint.EndPointType);
+                if (CurrentEndPoint == null)
+                    CurrentEndPoint = endPoints.First();
+                else
+                    CurrentEndPoint = endPoints.FirstOrDefault(x => x.Preference > CurrentEndPoint.Preference);
+
+                if (CurrentEndPoint == null)
+                    Hurl("", null);
+
+                client = serviceFactory(CurrentEndPoint.EndPointType);
 
                 if (client == null)
                     continue;
 
-                bool isClientFound = true;
-
                 try
                 {
                     evaluator();
+                    isClientFound = true;
                 }
                 catch (Exception ex)
                 {
-                    isClientFound = false;
+                    
                 }
-                
-
-                if (!isClientFound)
-                    continue;
-                
-                break;
             }
-            return client;
         }
 
-        private bool CallClient<TResult>(Func<T, TResult> client, IEndPointConfiguration ep)
+        private T NullClient()
         {
-            bool result = true;
-
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-                result = false;
-            }
-            return result; 
+            CurrentEndPoint = null;
+            return default(T);
         }
 
-        private bool CallValidator(IEndPointValidator validator, IEndPointConfiguration ep)
+        private void Hurl(string message, Exception innerEx)
         {
-            return validator.IsInterfaceAlive(ep);
+
         }
     }
 }
