@@ -8,26 +8,29 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     public class EndPointContext
     {
-        private Dictionary<Type, IEndPointConfiguration> EndPoints;
+        private Dictionary<string, IEndPointConfiguration> EndPoints;
 
         public EndPointContext()
         {
-            EndPoints = new Dictionary<Type, IEndPointConfiguration>();
+            EndPoints = new Dictionary<string, IEndPointConfiguration>();
         }
 
-        public IEndPointConfiguration GetCurrentEndPoint<T>()
+        public IEndPointConfiguration GetCurrentEndPoint(string apiName)
         {
             IEndPointConfiguration result = null;
-            EndPoints.TryGetValue(typeof(T), out result);
+            EndPoints.TryGetValue(apiName, out result);
             return result;
         }
 
-        public void SetCurrentEndPoint<T>(IEndPointConfiguration endPoint)
+        public void SetCurrentEndPoint(string apiName, IEndPointConfiguration endPoint)
         {
+            if (string.IsNullOrEmpty(apiName))
+                throw new ArgumentNullException(apiName);
+
             if (endPoint == null)
                 throw new ArgumentNullException("endPoint");
 
-            EndPoints[typeof(T)] = endPoint;
+            EndPoints[apiName] = endPoint;
         }
     }
 }

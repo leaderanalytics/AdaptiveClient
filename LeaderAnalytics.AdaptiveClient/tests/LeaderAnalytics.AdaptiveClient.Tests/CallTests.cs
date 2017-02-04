@@ -13,28 +13,11 @@ using Moq;
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
     [TestFixture]
-    public class Class1 : BaseTest
+    public class CallTests : BaseTest
     {
         [Test]
         public void Reslove_InProcessClient_of_type_IDummyAPI1()
         {
-            //Moq.Mock<IDummyAPI1> webClientMock1 = new Mock<IDummyAPI1>();
-            //webClientMock1.Setup(x => x.GetString()).Returns("Hello from web client");
-
-            //Moq.Mock<IDummyAPI2> webClientMock2 = new Mock<IDummyAPI2>();
-            //webClientMock2.Setup(x => x.GetInt()).Returns(1);
-
-            //Moq.Mock<IDummyAPI1> inProcessMock1 = new Mock<IDummyAPI1>();
-            //inProcessMock1.Setup(x => x.GetString()).Returns("Hello from In Process client");
-
-            //Moq.Mock<IDummyAPI2> inProcessMock2 = new Mock<IDummyAPI2>();
-            //inProcessMock2.Setup(x => x.GetInt()).Returns(2);
-
-            //IDummyAPI1 webClient1 = webClientMock1.Object;
-            //IDummyAPI2 webClient2 = webClientMock2.Object;
-            //IDummyAPI1 inProcessClient1 = inProcessMock1.Object;
-            //IDummyAPI2 inProcessClient2 = inProcessMock2.Object;
-
             Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
             networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
             networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
@@ -44,6 +27,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Call(x => x.GetString());
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcessClient1", result);
         }
 
@@ -60,6 +44,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Call(x => x.GetString());
+            Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result);
         }
     }

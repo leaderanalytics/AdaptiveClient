@@ -24,6 +24,7 @@ namespace LeaderAnalytics.AdaptiveClient
             builder.Register<Func<EndPointType, IEndPointValidator>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ep => cxt.ResolveKeyed<IEndPointValidator>(ep); });
             builder.RegisterType<EndPointContext>().SingleInstance();
             builder.RegisterGeneric(typeof(ClientFactory<>)).As(typeof(IClientFactory<>));
+            builder.RegisterGeneric(typeof(ClientEvaluator<>)).As(typeof(IClientEvaluator<>));
         }
     }
 }

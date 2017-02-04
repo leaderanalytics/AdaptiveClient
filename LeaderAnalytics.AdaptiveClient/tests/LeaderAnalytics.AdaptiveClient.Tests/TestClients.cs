@@ -8,7 +8,8 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 {
     public interface IDummyAPI1: IDisposable
     {
-        string GetString();  
+        string GetString();
+        Task<string> GetStringAsync(); 
     }
 
     public interface IDummyAPI2: IDisposable
@@ -23,6 +24,12 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             return "InProcessClient1";
         }
 
+        public async Task<string> GetStringAsync()
+        {
+            await Task.Delay(2000);
+            return GetString();
+        }
+
         public void Dispose()
         {
 
@@ -34,6 +41,12 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public string GetString()
         {
             return "WebAPIClient1";
+        }
+
+        public async Task<string> GetStringAsync()
+        {
+            await Task.Delay(2000);
+            return GetString();
         }
 
         public void Dispose()
