@@ -2,10 +2,8 @@
   "copyright": "Sam Wheat",
   "description": "A pattern to dynamically resolve data access clients based on server availability.",
   "title": "LeaderAnalytics.AdaptiveClient",
-  "version": "0.0.10-*",
-
+  "version": "0.1.0-*",
   "dependencies": {
-    "Autofac": "4.2.1",
     "NETStandard.Library": "1.6.1",
     "Microsoft.Extensions.Options": "1.1.0",
     "System.ServiceModel.Http": "4.3.0",
@@ -14,7 +12,8 @@
     "System.ServiceModel.Security": "4.3.0",
     "System.Data.SqlClient": "4.3.0",
     "System.Net.NetworkInformation": "4.3.0",
-    "System.Runtime.Serialization.Primitives": "4.3.0"
+    "System.Runtime.Serialization.Primitives": "4.3.0",
+    "Autofac": "4.3.0"
   },
 
   "frameworks": {
