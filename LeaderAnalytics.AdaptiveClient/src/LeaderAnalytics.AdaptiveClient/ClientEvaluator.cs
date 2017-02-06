@@ -10,7 +10,8 @@ namespace LeaderAnalytics.AdaptiveClient
         public ClientEvaluator(
             Func<Type, IPerimeter> epcFactory,
             Func<EndPointType, T> serviceFactory,
-            EndPointContext endPointContext) : base(epcFactory, serviceFactory, null, endPointContext)
+            EndPointCache endPointCache,
+            EndPointContext endPointContext) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext)
         {
           
         }
@@ -38,6 +39,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 try
                 {
                     method(client);
+                    endPointContext.CurrentEndPoint = CurrentEndPoint;
                     success = true;
                     break;
                 }

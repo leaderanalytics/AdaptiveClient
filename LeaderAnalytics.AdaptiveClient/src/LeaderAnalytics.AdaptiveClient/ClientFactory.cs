@@ -12,7 +12,8 @@ namespace LeaderAnalytics.AdaptiveClient
             Func<Type, IPerimeter> epcFactory,
             Func<EndPointType, T> serviceFactory,
             Func<EndPointType, IEndPointValidator> validatorFactory,
-            EndPointContext endPointContext) : base(epcFactory, serviceFactory, validatorFactory, endPointContext)
+            EndPointCache endPointCache,
+            EndPointContext endPointContext) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext)
         {
         
         }
@@ -28,8 +29,11 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             SetAvailableEndPoints(overrideNames);
 
-            if(CurrentEndPoint != null)
+            if (CurrentEndPoint != null)
+            {
+                endPointContext.CurrentEndPoint = CurrentEndPoint;
                 return serviceFactory(CurrentEndPoint.EndPointType);
+            }
 
             foreach (T client in ClientEnumerator())
             {
@@ -38,6 +42,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 if (!validator.IsInterfaceAlive(CurrentEndPoint))
                     continue;
 
+                endPointContext.CurrentEndPoint = CurrentEndPoint;
                 return client;
             }
 

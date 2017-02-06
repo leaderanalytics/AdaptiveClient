@@ -12,7 +12,7 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
 
     public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class, IDisposable
     {
-        private EndPointContext endPointContext;
+        private EndPointCache endPointContext;
         public IEndPointConfiguration CurrentEndPoint
         {
             get
@@ -23,7 +23,7 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
         private IPerimeter perimeter;
         private ILifetimeScope container;
 
-        public AdaptiveClient(ILifetimeScope container, Func<Type, IPerimeter> epcFactory, EndPointContext endPointContext)
+        public AdaptiveClient(ILifetimeScope container, Func<Type, IPerimeter> epcFactory, EndPointCache endPointContext)
         {
             this.container = container;
             perimeter = epcFactory(typeof(T));

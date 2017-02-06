@@ -10,6 +10,7 @@ namespace LeaderAnalytics.AdaptiveClient
         protected Func<Type, IPerimeter> epcFactory;
         protected Func<EndPointType, T> serviceFactory;
         protected Func<EndPointType, IEndPointValidator> validatorFactory;
+        protected EndPointCache endPointCache;
         protected EndPointContext endPointContext;
         protected readonly IPerimeter perimeter;
 
@@ -17,12 +18,12 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             get
             {
-                return endPointContext.GetCurrentEndPoint(perimeter.API_Name);
+                return endPointCache.GetCurrentEndPoint(perimeter.API_Name);
             }
 
             protected set
             {
-                endPointContext.SetCurrentEndPoint(perimeter.API_Name, value);
+                endPointCache.SetCurrentEndPoint(perimeter.API_Name, value);
             }
         }
         protected IEnumerable<IEndPointConfiguration> AvailableEndPoints { get; set; }
@@ -31,11 +32,13 @@ namespace LeaderAnalytics.AdaptiveClient
            Func<Type, IPerimeter> epcFactory,
            Func<EndPointType, T> serviceFactory,
            Func<EndPointType, IEndPointValidator> validatorFactory,
+           EndPointCache endPointCache,
            EndPointContext endPointContext)
         {
             this.epcFactory = epcFactory;
             this.serviceFactory = serviceFactory;
             this.validatorFactory = validatorFactory;
+            this.endPointCache = endPointCache;
             this.endPointContext = endPointContext;
 
             perimeter = epcFactory(typeof(T));
@@ -76,15 +79,22 @@ namespace LeaderAnalytics.AdaptiveClient
 
             for(int i=0;i<tryCount;i++)
             {
+                T client = default(T); // remove
+                 
                 if (!useCachedEndPoint)
                     CurrentEndPoint = AvailableEndPoints.ElementAt(i);
+                try
+                {
+                    useCachedEndPoint = false;
+                     client = serviceFactory(CurrentEndPoint.EndPointType);
 
-                useCachedEndPoint = false;
-                T client = serviceFactory(CurrentEndPoint.EndPointType);
-
-                if (client == null)
-                    continue; // not an error - just means no client is registered for this endpoint.
-
+                    if (client == null)
+                        continue; // not an error - just means no client is registered for this endpoint.
+                }
+                catch (Exception ex)
+                {
+                    string w = ex.Message;
+                }
                 yield return client;
             }
         }
