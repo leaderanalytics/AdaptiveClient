@@ -6,25 +6,16 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public class ClientFactory<T> : IClientFactory<T>
+    public class ClientFactory<T> :BaseClientFactory<T>, IClientFactory<T>
     {
-        private Func<Type, IPerimeter> epcFactory;
-        private Func<EndPointType, T> serviceFactory;
-        private Func<EndPointType, IEndPointValidator> validatorFactory;
-        private EndPointContext endPointContext;
-        public IEndPointConfiguration CurrentEndPoint { get; private set; }
-
         public ClientFactory(
             Func<Type, IPerimeter> epcFactory,
             Func<EndPointType, T> serviceFactory,
             Func<EndPointType, IEndPointValidator> validatorFactory,
-            EndPointContext endPointContext
-            )
+            EndPointCache endPointCache,
+            EndPointContext endPointContext) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext)
         {
-            this.epcFactory = epcFactory;
-            this.serviceFactory = serviceFactory;
-            this.validatorFactory = validatorFactory;
-            this.endPointContext = endPointContext;
+        
         }
 
         /// <summary>
@@ -36,36 +27,27 @@ namespace LeaderAnalytics.AdaptiveClient
         /// <returns></returns>
         public virtual T Create(params string[] overrideNames)
         {
-            endPointContext.CurrentEndPoint = CurrentEndPoint = null;
-            T client = default(T);
-            IPerimeter perimeter = epcFactory(typeof(T));
-            IEnumerable<IEndPointConfiguration> endPoints;
+            SetAvailableEndPoints(overrideNames);
 
-            if (perimeter == null)
-                return client;
-
-            if (overrideNames != null && overrideNames.Any())
-                endPoints = perimeter.EndPoints.Where(x => overrideNames.Any(o => x.Name == o));
-            else
-                endPoints = perimeter.EndPoints;
-
-            foreach (IEndPointConfiguration endPoint in endPoints)
+            if (CurrentEndPoint != null)
             {
-                IEndPointValidator validator = validatorFactory(endPoint.EndPointType);
-
-                if (!validator.IsInterfaceAlive(endPoint))
-                    continue;
-
-                // must set CurrentEndPoint before calling serviceFactory
-                endPointContext.CurrentEndPoint = CurrentEndPoint = endPoint;
-                client = serviceFactory(endPoint.EndPointType);
-
-                if (client == null)
-                    continue;
-                
-                break;
+                endPointContext.CurrentEndPoint = CurrentEndPoint;
+                return serviceFactory(CurrentEndPoint.EndPointType);
             }
-            return client;
+
+            foreach (T client in ClientEnumerator())
+            {
+                IEndPointValidator validator = validatorFactory(CurrentEndPoint.EndPointType);
+
+                if (!validator.IsInterfaceAlive(CurrentEndPoint))
+                    continue;
+
+                endPointContext.CurrentEndPoint = CurrentEndPoint;
+                return client;
+            }
+
+            Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
+            return default(T);
         }
     }
 }

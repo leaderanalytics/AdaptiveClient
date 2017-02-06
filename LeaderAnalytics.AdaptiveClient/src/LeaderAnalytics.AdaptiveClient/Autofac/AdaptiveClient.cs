@@ -12,12 +12,22 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
 
     public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class, IDisposable
     {
-        public IEndPointConfiguration CurrentEndPoint { get; private set; }
+        private EndPointCache endPointContext;
+        public IEndPointConfiguration CurrentEndPoint
+        {
+            get
+            {
+                return endPointContext.GetCurrentEndPoint(perimeter.API_Name);
+            }
+        }
+        private IPerimeter perimeter;
         private ILifetimeScope container;
 
-        public AdaptiveClient(ILifetimeScope container)
+        public AdaptiveClient(ILifetimeScope container, Func<Type, IPerimeter> epcFactory, EndPointCache endPointContext)
         {
             this.container = container;
+            perimeter = epcFactory(typeof(T));
+            this.endPointContext = endPointContext;
         }
 
         public void Call(Action<T> method, params string[] endPointNames)
@@ -26,9 +36,9 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
             {
                 IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
                 T client = factory.Create(endPointNames);
-                CurrentEndPoint = factory.CurrentEndPoint;
                 method(client);
             }
+            
         }
 
         public TResult Call<TResult>(Func<T, TResult> method, params string[] endPointNames)
@@ -37,7 +47,6 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
             {
                 IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
                 T client = factory.Create(endPointNames);
-                CurrentEndPoint = factory.CurrentEndPoint;
                 return method(client);
             }
         }
@@ -48,7 +57,6 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
             {
                 IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
                 T client = factory.Create(endPointNames);
-                CurrentEndPoint = factory.CurrentEndPoint;
                 await method(client);
             }
         }
@@ -59,8 +67,26 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
             {
                 IClientFactory<T> factory = scope.Resolve<IClientFactory<T>>();
                 T client = factory.Create(endPointNames);
-                CurrentEndPoint = factory.CurrentEndPoint;
                 return await method(client);
+            }
+        }
+
+        public void Try(Action<T> method, params string[] endPointNames)
+        {
+            using (ILifetimeScope scope = container.BeginLifetimeScope())
+            {
+                IClientEvaluator<T> evaluator = scope.Resolve<IClientEvaluator<T>>();
+                evaluator.Try(method, endPointNames);
+            }
+        }
+
+        public TResult Try<TResult>(Func<T, TResult> method, params string[] endPointNames)
+        {
+            using (ILifetimeScope scope = container.BeginLifetimeScope())
+            {
+                IClientEvaluator<T> evaluator = scope.Resolve<IClientEvaluator<T>>();
+                TResult result = evaluator.Try(method, endPointNames);
+                return result;
             }
         }
     }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using LeaderAnalytics.AdaptiveClient.Autofac;
-
+//-
 namespace LeaderAnalytics.AdaptiveClient
 {
     public class AutofacModule : Module
@@ -21,8 +21,11 @@ namespace LeaderAnalytics.AdaptiveClient
             builder.Register<Func<IEndPointConfiguration>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return () => cxt.Resolve<EndPointContext>().CurrentEndPoint; });
             builder.Register<Func<Type, IPerimeter>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return t => cxt.ResolveKeyed<IPerimeter>(t); });
             builder.Register<Func<EndPointType, IEndPointValidator>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ep => cxt.ResolveKeyed<IEndPointValidator>(ep); });
-            builder.RegisterType<EndPointContext>().InstancePerLifetimeScope();
+            builder.RegisterType<EndPointContext>().InstancePerLifetimeScope();     // per lifetimescope - see notes in EndPointContext.cs
+            builder.RegisterType<EndPointCache>().SingleInstance();                 // singleton
             builder.RegisterGeneric(typeof(ClientFactory<>)).As(typeof(IClientFactory<>));
+            builder.RegisterGeneric(typeof(ClientEvaluator<>)).As(typeof(IClientEvaluator<>));
         }
     }
 }
+
