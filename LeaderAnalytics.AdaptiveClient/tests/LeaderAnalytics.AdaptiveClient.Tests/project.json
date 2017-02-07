@@ -2,7 +2,7 @@
   "version": "1.0.0-*",
   "testRunner": "nunit",
   "dependencies": {
-    "LeaderAnalytics.AdaptiveClient": "0.0.10",
+    "LeaderAnalytics.AdaptiveClient": "0.1.6",
     "NETStandard.Library": "1.6.1",
     "NUnit": "3.6.0",
     "dotnet-test-nunit": "3.4.0-beta-2",
