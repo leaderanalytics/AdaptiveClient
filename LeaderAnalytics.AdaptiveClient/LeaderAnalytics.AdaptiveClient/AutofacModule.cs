@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using LeaderAnalytics.AdaptiveClient.Autofac;
-//-
+
 namespace LeaderAnalytics.AdaptiveClient
 {
     public class AutofacModule : Module
