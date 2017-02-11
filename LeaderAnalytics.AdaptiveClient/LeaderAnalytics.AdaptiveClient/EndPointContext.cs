@@ -7,7 +7,7 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     /*
         Why this class exits and how is it different from EndPointCache:
-        This class is created once per lifetimescope, EndPointCache is created once per Application.
+        This class is created once per LifetimeScope, EndPointCache is created once per Application.
         
         So why not just inject EndPointCache and resolve the current endpoint?  To do that we need to know
         the API_Name, to get the API_Name we need to know the type of client being resolved.  

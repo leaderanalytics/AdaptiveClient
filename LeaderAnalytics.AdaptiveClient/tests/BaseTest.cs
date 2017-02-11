@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using NUnit.Framework;
+//using NUnit.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Autofac;
 using LeaderAnalytics.AdaptiveClient;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
@@ -18,11 +19,13 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public AutofacRegistrationHelper registrationHelper;
 
 
-        [SetUp]
+        [TestInitialize]
         public void Setup()
         {
+            string dir = Path.Combine(Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.FullName,"EndPoints.json");
+            
             builder = new ContainerBuilder();
-            JObject obj = JsonConvert.DeserializeObject(File.ReadAllText("EndPoints.json")) as JObject;
+            JObject obj = JsonConvert.DeserializeObject(File.ReadAllText(dir)) as JObject;
             List<EndPointConfiguration> endPoints = obj["EndPointConfigurations"].ToObject<List<EndPointConfiguration>>();
 
             registrationHelper = new AutofacRegistrationHelper(builder);

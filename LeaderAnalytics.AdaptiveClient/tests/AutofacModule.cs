@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using LeaderAnalytics.AdaptiveClient;
 using Autofac;
-using Newtonsoft.Json;
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
