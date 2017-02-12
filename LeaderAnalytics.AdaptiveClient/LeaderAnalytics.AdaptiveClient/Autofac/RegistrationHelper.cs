@@ -46,7 +46,14 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             RegisterPerimeter(typeof(TInterface), api_name);
             
-            builder.Register<Func<EndPointType, TInterface>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ept => cxt.ResolveKeyed<TInterface>(ept); });
+            builder.Register<Func<EndPointType, TInterface>>(c => {
+                IComponentContext cxt = c.Resolve<IComponentContext>();
+                Func<EndPointType, TInterface> func =  ept => {
+                    var intf = cxt.ResolveKeyed<TInterface>(ept);
+                    return intf;
+                };
+                return func;
+            });
 
             if (endPointType == EndPointType.WCF)
             {
