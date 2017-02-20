@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaderAnalytics.AdaptiveCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeaderAnalytics.AdaptiveClient.Tests", "tests\LeaderAnalytics.AdaptiveClient.Tests.csproj", "{B04683F9-3717-48F6-A7F1-750C3F1E1C0E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CBA02C5-7C92-4BE0-B394-BA16CF1FE8DA}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
