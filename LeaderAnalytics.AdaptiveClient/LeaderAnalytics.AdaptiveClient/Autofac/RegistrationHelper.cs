@@ -46,26 +46,26 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             RegisterPerimeter(typeof(TInterface), api_name);
             
-            builder.Register<Func<EndPointType, TInterface>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ept => cxt.ResolveKeyed<TInterface>(ept); });
+            builder.Register<Func<EndPointType, TInterface>>(c => {
+                IComponentContext cxt = c.Resolve<IComponentContext>();
+                return ept => ResolutionHelper.ResolveClient<TInterface>(cxt, ept);
+            });
 
             if (endPointType == EndPointType.WCF)
             {
                 builder.Register<Func<string, ChannelFactory<TInterface>>>(c =>
                 {
                     IComponentContext cxt = c.Resolve<IComponentContext>();
-                    Func<IEndPointConfiguration> epfactory = cxt.Resolve<Func<IEndPointConfiguration>>();
-                    IEndPointConfiguration ep = epfactory();
-
-                    // Todo: need to resolve ChannelFactory
-
-                    return s => 
-                    new ChannelFactory<TInterface>(
-                        new BasicHttpBinding(),
-                        new EndpointAddress(ep.ConnectionString + s)
-                        );
+                    return s => ResolutionHelper.ResolveChannelFactory<TInterface>(cxt, s);
                 });
             }
             return builder.RegisterType<TClient>().Keyed<TInterface>(endPointType);
+        }
+
+
+        public void RegisterLogger(Action<string> logger)
+        {
+            builder.RegisterInstance<Action<string>>(logger);
         }
 
         /// <summary>

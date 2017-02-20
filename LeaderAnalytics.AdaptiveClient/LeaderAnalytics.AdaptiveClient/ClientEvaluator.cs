@@ -11,7 +11,8 @@ namespace LeaderAnalytics.AdaptiveClient
             Func<Type, IPerimeter> epcFactory,
             Func<EndPointType, T> serviceFactory,
             EndPointCache endPointCache,
-            EndPointContext endPointContext) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext)
+            EndPointContext endPointContext,
+            Action<string> logger) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext, logger)
         {
           
         }
@@ -39,18 +40,17 @@ namespace LeaderAnalytics.AdaptiveClient
                 try
                 {
                     method(client);
-                    endPointContext.CurrentEndPoint = CurrentEndPoint;
                     success = true;
                     break;
                 }
                 catch (Exception ex)
                 {
-                    if (!IsConnectivityException(ex))
-                    {
-                        string errorMsg = $"An error occurred that appears to be unrelated to client connectivity.  This is most likely an application error. ";
-                        errorMsg += $"The service name is {typeof(T).Name}.  The EndPointConfiguration Name is {CurrentEndPoint.Name}.  See InnerException for details";
-                        Hurl(errorMsg, ex);
-                    }
+                    // All errors are assumed to be connectivity errors. The server is responsible for its own error handling.
+                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}.  ";
+                    errorMsg += $"The service name is {typeof(T).Name}.  The content of the exception is: " + ex.ToString();
+
+                    if (logger != null)
+                        logger(errorMsg);
                 }
             }
 
@@ -58,11 +58,6 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
             }
-        }
-
-        protected virtual bool IsConnectivityException(Exception ex)
-        {
-            return true;
         }
     }
 }

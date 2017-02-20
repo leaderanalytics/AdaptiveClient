@@ -13,19 +13,16 @@ namespace LeaderAnalytics.AdaptiveClient
         protected EndPointCache endPointCache;
         protected EndPointContext endPointContext;
         protected readonly IPerimeter perimeter;
+        protected readonly Action<string> logger;
 
-        public IEndPointConfiguration CurrentEndPoint
+        public IEndPointConfiguration CachedEndPoint
         {
-            get
-            {
-                return endPointCache.GetCurrentEndPoint(perimeter.API_Name);
-            }
+            // "Current" and "Cached" are not the same - do not set EndPointContext.CurentEndPoint here.
+            get { return endPointCache.GetEndPoint(perimeter.API_Name); }
 
-            protected set
-            {
-                endPointCache.SetCurrentEndPoint(perimeter.API_Name, value);
-            }
+            protected set { endPointCache.SetEndPoint(perimeter.API_Name, value); }
         }
+
         protected IEnumerable<IEndPointConfiguration> AvailableEndPoints { get; set; }
 
         public BaseClientFactory(
@@ -33,13 +30,15 @@ namespace LeaderAnalytics.AdaptiveClient
            Func<EndPointType, T> serviceFactory,
            Func<EndPointType, IEndPointValidator> validatorFactory,
            EndPointCache endPointCache,
-           EndPointContext endPointContext)
+           EndPointContext endPointContext,
+           Action<string> logger)
         {
             this.epcFactory = epcFactory;
             this.serviceFactory = serviceFactory;
             this.validatorFactory = validatorFactory;
             this.endPointCache = endPointCache;
             this.endPointContext = endPointContext;
+            this.logger = logger;
 
             perimeter = epcFactory(typeof(T));
 
@@ -67,42 +66,36 @@ namespace LeaderAnalytics.AdaptiveClient
                 Hurl($"No EndPointConfigurationItems were available to use for {typeof(T).Name}.  A possible reason for this exception is that no EndPointConfigurations were found with names that match the list of override names.", null);
 
             // Make sure the current EndPoint, if any, exists in the registered EndPoint list after being filtered for overrides.
-            if (CurrentEndPoint != null && !AvailableEndPoints.Any(x => x.Name == CurrentEndPoint.Name))
-                CurrentEndPoint = null;
+            if (CachedEndPoint != null && !AvailableEndPoints.Any(x => x.Name == CachedEndPoint.Name))
+                CachedEndPoint = null;
+
+            endPointContext.CurrentEndPoint = CachedEndPoint; 
         }
 
         protected IEnumerable<T> ClientEnumerator()
         {
             // if CurrentEndPoint is not null it means we have used it before.  Reuse the cached CurrentEndPoint on the first iteration
-            bool useCachedEndPoint = CurrentEndPoint != null;
-            int tryCount = useCachedEndPoint ? AvailableEndPoints.Count(x => x.Preference >= CurrentEndPoint.Preference) : AvailableEndPoints.Count();
 
-            for(int i=0;i<tryCount;i++)
+            if (CachedEndPoint == null)
+                CachedEndPoint = AvailableEndPoints.First();
+
+            while (CachedEndPoint != null)
             {
-                T client = default(T); // remove
-                 
-                if (!useCachedEndPoint)
-                    CurrentEndPoint = AvailableEndPoints.ElementAt(i);
-                try
-                {
-                    useCachedEndPoint = false;
-                     client = serviceFactory(CurrentEndPoint.EndPointType);
+                // endPointContext.CurrentEndPoint must be set at this point because calling serviceFactory will attempt to new up a T.
+                endPointContext.CurrentEndPoint = CachedEndPoint;
+                T client = serviceFactory(CachedEndPoint.EndPointType);
 
-                    if (client == null)
-                        continue; // not an error - just means no client is registered for this endpoint.
-                }
-                catch (Exception ex)
-                {
-                    string w = ex.Message;
-                }
-                yield return client;
+                if (client != null)
+                    yield return client;
+
+                CachedEndPoint = AvailableEndPoints.FirstOrDefault(x => x.Preference > CachedEndPoint.Preference);
             }
         }
 
-        public virtual void InvalidateCurrentEndPoint()
+        public virtual void InvalidateCachedEndPoint()
         {
             // Will cause a call to ClientEnumerator to start with the first EndPoint
-            CurrentEndPoint = null;
+            CachedEndPoint = null;
         }
     }
 }

@@ -17,17 +17,17 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
         {
             get
             {
-                return endPointContext.GetCurrentEndPoint(perimeter.API_Name);
+                return endPointContext.GetEndPoint(perimeter.API_Name);
             }
         }
         private IPerimeter perimeter;
         private ILifetimeScope container;
 
-        public AdaptiveClient(ILifetimeScope container, Func<Type, IPerimeter> epcFactory, EndPointCache endPointContext)
+        public AdaptiveClient(ILifetimeScope container, Func<Type, IPerimeter> epcFactory, EndPointCache endPointCache)
         {
             this.container = container;
             perimeter = epcFactory(typeof(T));
-            this.endPointContext = endPointContext;
+            this.endPointContext = endPointCache;
         }
 
         public void Call(Action<T> method, params string[] endPointNames)
