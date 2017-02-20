@@ -19,12 +19,13 @@ namespace LeaderAnalytics.AdaptiveClient
             builder.RegisterType<HttpEndPointValidator>().Keyed<IEndPointValidator>(EndPointType.WebAPI);
 
             builder.Register<Func<IEndPointConfiguration>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return () => cxt.Resolve<EndPointContext>().CurrentEndPoint; });
-            builder.Register<Func<Type, IPerimeter>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return t => cxt.ResolveKeyed<IPerimeter>(t); });
+            builder.Register<Func<Type, IPerimeter>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return t => ResolutionHelper.ResolvePerimeter(cxt, t); });
             builder.Register<Func<EndPointType, IEndPointValidator>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ep => cxt.ResolveKeyed<IEndPointValidator>(ep); });
             builder.RegisterType<EndPointContext>().InstancePerLifetimeScope();     // per lifetimescope - see notes in EndPointContext.cs
             builder.RegisterType<EndPointCache>().SingleInstance();                 // singleton
             builder.RegisterGeneric(typeof(ClientFactory<>)).As(typeof(IClientFactory<>));
             builder.RegisterGeneric(typeof(ClientEvaluator<>)).As(typeof(IClientEvaluator<>));
+            builder.RegisterInstance<Action<string>>(msg => { }); // default logger.  User can override by calling RegistrationHelper.RegisterLogger
         }
     }
 }

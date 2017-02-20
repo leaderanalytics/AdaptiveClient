@@ -20,22 +20,22 @@ namespace LeaderAnalytics.AdaptiveClient
             EndPoints = new Dictionary<string, IEndPointConfiguration>();
         }
 
-        public IEndPointConfiguration GetCurrentEndPoint(string apiName)
+        public IEndPointConfiguration GetEndPoint(string apiName)
         {
             IEndPointConfiguration result = null;
             EndPoints.TryGetValue(apiName, out result);
             return result;
         }
 
-        public void SetCurrentEndPoint(string apiName, IEndPointConfiguration endPoint)
+        public void SetEndPoint(string apiName, IEndPointConfiguration endPoint)
         {
             if (string.IsNullOrEmpty(apiName))
                 throw new ArgumentNullException(apiName);
 
-            if (endPoint == null)
-                throw new ArgumentNullException("endPoint");
-
-            EndPoints[apiName] = endPoint;
+            if(endPoint == null)
+                EndPoints.Remove(apiName);
+            else
+                EndPoints[apiName] = endPoint;
         }
     }
 }

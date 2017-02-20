@@ -17,7 +17,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
     {
         public ContainerBuilder builder;
         public AutofacRegistrationHelper registrationHelper;
-
+        public string LogMessage;
 
         [TestInitialize]
         public void Setup()
@@ -36,6 +36,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             registrationHelper.Register<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2.ToString());
             registrationHelper.Register<WebAPIClient2, IDummyAPI2>(EndPointType.WebAPI, APINames.DummyAPI1.ToString());
+            registrationHelper.RegisterLogger(msg => this.LogMessage = msg);
         }
     }
 }

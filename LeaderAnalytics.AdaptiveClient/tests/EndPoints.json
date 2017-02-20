@@ -19,6 +19,15 @@
     },
 
     {
+      "Name": "Application_WebAPI1A",
+      "IsActive": "true",
+      "API_Name": "DummyAPI1",
+      "Preference": "40",
+      "EndPointType": "WebAPI",
+      "ConnectionString": "http://localhost:98765/api/"
+    },
+
+    {
       "Name": "Application_SQL2",
       "IsActive": "true",
       "API_Name": "DummyAPI2",

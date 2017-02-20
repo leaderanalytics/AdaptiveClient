@@ -13,7 +13,8 @@ namespace LeaderAnalytics.AdaptiveClient
             Func<EndPointType, T> serviceFactory,
             Func<EndPointType, IEndPointValidator> validatorFactory,
             EndPointCache endPointCache,
-            EndPointContext endPointContext) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext)
+            EndPointContext endPointContext,
+            Action<string> logger) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext, logger)
         {
         
         }
@@ -28,21 +29,24 @@ namespace LeaderAnalytics.AdaptiveClient
         public virtual T Create(params string[] overrideNames)
         {
             SetAvailableEndPoints(overrideNames);
+            IEndPointConfiguration cachedEndPoint = CachedEndPoint;
 
-            if (CurrentEndPoint != null)
+            if (cachedEndPoint != null)
             {
-                endPointContext.CurrentEndPoint = CurrentEndPoint;
-                return serviceFactory(CurrentEndPoint.EndPointType);
+                return serviceFactory(cachedEndPoint.EndPointType);
             }
 
             foreach (T client in ClientEnumerator())
             {
-                IEndPointValidator validator = validatorFactory(CurrentEndPoint.EndPointType);
+                IEndPointValidator validator = validatorFactory(CachedEndPoint.EndPointType);
 
-                if (!validator.IsInterfaceAlive(CurrentEndPoint))
+                if (!validator.IsInterfaceAlive(CachedEndPoint))
+                {
+                    if (logger != null)
+                        logger($"Failed to connect to EndPoint named {CachedEndPoint.Name} when resolving a client of type {typeof(T)}.");
+
                     continue;
-
-                endPointContext.CurrentEndPoint = CurrentEndPoint;
+                }
                 return client;
             }
 

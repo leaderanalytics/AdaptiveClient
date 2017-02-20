@@ -30,6 +30,6 @@ namespace LeaderAnalytics.AdaptiveClient
 
     public class EndPointContext
     {
-        public IEndPointConfiguration CurrentEndPoint { get; set; }
+        public IEndPointConfiguration CurrentEndPoint { get; internal set; }
     }
 }

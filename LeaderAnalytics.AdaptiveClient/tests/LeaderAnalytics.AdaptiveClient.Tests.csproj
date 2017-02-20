@@ -4,16 +4,18 @@
   </PropertyGroup>
   <ItemGroup>
     <!--<PackageReference Include="dotnet-test-nunit" Version="3.4.0-beta-3" />-->
-    <PackageReference Include="Autofac" Version="4.2.1" />
-    <PackageReference Include="LeaderAnalytics.AdaptiveClient" Version="0.13.0" />
-    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
+    <PackageReference Include="Autofac" Version="4.3.0" />
+    <PackageReference Include="NETStandard.Library" Version="1.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <!--<PackageReference Include="NUnit" Version="3.6.0" />-->
     <PackageReference Include="Moq" Version="4.6.38-alpha" />
     <!--<PackageReference Include="NUnit3TestAdapter" Version="3.7.0" />-->
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170210-02" />
-    <PackageReference Include="MSTest.TestAdapter" Version="1.1.10-rc2" />
-    <PackageReference Include="MSTest.TestFramework" Version="1.0.8-rc2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170217-05" />
+    <PackageReference Include="MSTest.TestAdapter" Version="1.1.11" />
+    <PackageReference Include="MSTest.TestFramework" Version="1.1.11" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LeaderAnalytics.AdaptiveClient\LeaderAnalytics.AdaptiveClient.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
