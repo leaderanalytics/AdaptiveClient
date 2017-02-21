@@ -30,7 +30,7 @@ public partial class MainWindow : Window
 
 ---
 
-#### [Get the nuget package](https://www.nuget.org/packages/LeaderAnalytics.AdaptiveClient/)
+#### [Get the nuget package](https://www.nuget.org/packages/AdaptiveClient/)
 
 ---
 
