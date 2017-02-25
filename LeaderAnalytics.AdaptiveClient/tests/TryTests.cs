@@ -139,7 +139,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Moq.Mock<IDummyAPI1> webAPIClientMock = new Mock<IDummyAPI1>();
             webAPIClientMock.Setup(x => x.GetString()).Callback(() => { if(webAPICalls++ == 1) throw new Exception("OMG"); }).Returns("WebAPIClient1");
             IDummyAPI1 webAPIClient = webAPIClientMock.Object;
-            builder.RegisterInstance(webAPIClient).Keyed<IDummyAPI1>(EndPointType.WebAPI);
+            builder.RegisterInstance(webAPIClient).Keyed<IDummyAPI1>(EndPointType.HTTP);
 
             IContainer container = builder.Build();
 

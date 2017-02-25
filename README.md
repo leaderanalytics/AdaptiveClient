@@ -59,7 +59,7 @@ An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection strin
 * **Name**: Name of the EndPoint: DevServer01, QASloth02, etc.
 * **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
 * **Preference**:  Number that allows ClientFactory to rank this EndPoint.  Lower numbers are ranked higher (more preferred).
-* **EndPointType**:  May be one of the following:  InProcess, WebAPI, WCF, ESB.  Assists ClientFactory in determining if the EndPoint is alive.  Multiple EndPointConfigurations of the same `EndPointType` may be defined for an API_Name.
+* **EndPointType**:  May be one of the following:  InProcess, HTTP, WCF, ESB.  Assists ClientFactory in determining if the EndPoint is alive.  Multiple EndPointConfigurations of the same `EndPointType` may be defined for an API_Name.
 * **ConnectionString**:  Valid connection string OR URL if pointing to a HTTP server.
 * **Parameters**:  Not used at this time.
 * **IsActive**:  Set this value to false to prevent using this `EndPointConfiguration`.
@@ -121,7 +121,7 @@ Follow the two steps below to register your `EndPointConfiguration` objects and 
  // client that communicates directly with the database (the service itself)
  registrationHelper.Register<MyApp.Services.UsersService, IUsersService>(EndPointType.InProcess, apiName);
  // WebAPI client 
- registrationHelper.Register<MyApp.WebAPIClient.UsersClient, IUsersService>(EndPointType.WebAPI, apiName);
+ registrationHelper.Register<MyApp.WebAPIClient.UsersClient, IUsersService>(EndPointType.HTTP, apiName);
  // WCF client 
  registrationHelper.Register<MyApp.WCFClient.UsersClient, IUsersService>(EndPointType.WCF, apiName);
  ```
