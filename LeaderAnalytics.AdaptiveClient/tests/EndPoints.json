@@ -14,7 +14,7 @@
       "IsActive": "true",
       "API_Name": "DummyAPI1",
       "Preference": "30",
-      "EndPointType": "WebAPI",
+      "EndPointType": "HTTP",
       "ConnectionString": "http://localhost:61426/api/"
     },
 
@@ -23,7 +23,7 @@
       "IsActive": "true",
       "API_Name": "DummyAPI1",
       "Preference": "40",
-      "EndPointType": "WebAPI",
+      "EndPointType": "HTTP",
       "ConnectionString": "http://localhost:98765/api/"
     },
 
@@ -41,7 +41,7 @@
       "IsActive": "true",
       "API_Name": "DummyAPI2",
       "Preference": "30",
-      "EndPointType": "WebAPI",
+      "EndPointType": "HTTP",
       "ConnectionString": "http://localhost:61426/api/"
     }
   ]

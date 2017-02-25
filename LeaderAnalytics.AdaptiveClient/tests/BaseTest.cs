@@ -32,10 +32,10 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             registrationHelper.RegisterEndPoints(endPoints);
 
             registrationHelper.Register<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1.ToString());
-            registrationHelper.Register<WebAPIClient1, IDummyAPI1>(EndPointType.WebAPI, APINames.DummyAPI1.ToString());
+            registrationHelper.Register<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1.ToString());
 
             registrationHelper.Register<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2.ToString());
-            registrationHelper.Register<WebAPIClient2, IDummyAPI2>(EndPointType.WebAPI, APINames.DummyAPI1.ToString());
+            registrationHelper.Register<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1.ToString());
             registrationHelper.RegisterLogger(msg => this.LogMessage = msg);
         }
     }
