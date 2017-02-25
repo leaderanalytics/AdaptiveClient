@@ -15,8 +15,8 @@ public partial class MainWindow : Window
     {
         // AdaptiveClient will use the best server available at the time the request is made. 
         // Server may be SQL, WCF, REST, etc. - your application does not need to know or care.
-        // If the request fails AdaptiveClient will fall back to any other server that 
-        // can handle the request regardless of platform or protocol:
+        // If the request fails AdaptiveClient will begin an orderly fall back to other 
+        // servers that can handle the request regardless of platform or protocol:
 
         User user = await client.CallAsync(x => x.GetUser(userID));
     }
@@ -39,7 +39,9 @@ public partial class MainWindow : Window
 
 
 ## What AdaptiveClient does
-Rather than make a service call directly to a specific server or type of server you make a call using `AdaptiveClient` instead.  `AdaptiveClient` will attempt to execute the call using the best available server.  If the call fails `AdaptiveClient` will make successive attempts, each time falling back to other servers of the same type or other types.  For example, a mobile user who is on-site and connected to a local area network will enjoy the performance of an in-process connection directly to the database server.  If the user tries to re-connect from a remote location `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
+Rather than make a service call directly to a specific server or type of server you make a call using `AdaptiveClient` instead.  `AdaptiveClient` will attempt to execute the call using the best available server.  If the call fails `AdaptiveClient` will make successive attempts, each time falling back to other servers of the same type or other types.
+
+For example, a mobile user who is on-site and connected to a local area network will enjoy the performance of an in-process connection directly to the database server.  If the user tries to re-connect from a remote location `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
 
 ## Who will benefit from using it
 * `AdaptiveClient` is ideally targeted to organizations that need to give local users access to their APIs over a local area network but who also wish to expose their APIs to remote users.
