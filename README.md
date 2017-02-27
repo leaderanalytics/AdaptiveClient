@@ -26,7 +26,10 @@ public partial class MainWindow : Window
 &nbsp;
 
 ---
-#### [Get the end-to-end demo](https://github.com/leaderanalytics/AdaptiveClientDemo)
+#### [Get the simple console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
+
+---
+#### [Get the advanced end-to-end demo](https://github.com/leaderanalytics/AdaptiveClient.AdvancedDemo)
 
 ---
 
@@ -144,7 +147,10 @@ User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
 ```
 
 ---
-#### [Get the end-to-end demo](https://github.com/leaderanalytics/AdaptiveClientDemo)
+#### [Get the simple console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
+
+---
+#### [Get the advanced end-to-end demo](https://github.com/leaderanalytics/AdaptiveClient.AdvancedDemo)
 
 ---
 
