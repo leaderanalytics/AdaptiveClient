@@ -29,14 +29,16 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             List<EndPointConfiguration> endPoints = obj["EndPointConfigurations"].ToObject<List<EndPointConfiguration>>();
 
             registrationHelper = new AutofacRegistrationHelper(builder);
-            registrationHelper.RegisterEndPoints(endPoints);
-
-            registrationHelper.Register<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1.ToString());
-            registrationHelper.Register<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1.ToString());
-
-            registrationHelper.Register<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2.ToString());
-            registrationHelper.Register<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1.ToString());
-            registrationHelper.RegisterLogger(msg => this.LogMessage = msg);
+            registrationHelper
+                .RegisterEndPoints(endPoints)
+                .Register<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1)
+                .Register<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1)
+                .Register<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2)
+                .Register<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1)
+                .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess)
+                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.WCF)
+                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.HTTP)
+                .RegisterLogger(msg => this.LogMessage = msg);
         }
     }
 }

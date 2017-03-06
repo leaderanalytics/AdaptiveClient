@@ -10,7 +10,7 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     public static class ResolutionHelper
     {
-        public static TInterface ResolveClient<TInterface>(IComponentContext cxt, EndPointType ept)
+        public static TInterface ResolveClient<TInterface>(IComponentContext cxt, string ept)
         {
             object result = null;
             cxt.TryResolveKeyed(ept, typeof(TInterface), out result); // Not an error if not resolved.
@@ -25,6 +25,17 @@ namespace LeaderAnalytics.AdaptiveClient
 
             if (result == null)
                 throw new ComponentNotRegisteredException($"Interface { typ.Name } has not been registered.  Use RegistrationHelper to register { typ.Name } with one or more implementations, EndPointConfiguration, and API names.");
+
+            return result;
+        }
+
+        public static IEndPointValidator ResolveValidator(IComponentContext cxt, string endPointType)
+        {
+            IEndPointValidator result = null;
+            result = cxt.ResolveOptionalKeyed<IEndPointValidator>(endPointType);
+
+            if (result == null)
+                throw new ComponentNotRegisteredException($"An attempt to resolve an EndPointValidator for EndPointType { endPointType } failed.  Use the RegisterEndPointValidator method on the RegistrationHelper to register an EndPointValidator for each EndPointType.");
 
             return result;
         }

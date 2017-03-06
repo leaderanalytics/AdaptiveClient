@@ -10,8 +10,8 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         public ClientFactory(
             Func<Type, IPerimeter> epcFactory,
-            Func<EndPointType, T> serviceFactory,
-            Func<EndPointType, IEndPointValidator> validatorFactory,
+            Func<string, T> serviceFactory,
+            Func<string, IEndPointValidator> validatorFactory,
             EndPointCache endPointCache,
             EndPointContext endPointContext,
             Action<string> logger) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext, logger)

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
-    public enum APINames
+    public static class APINames
     {
-        DummyAPI1,
-        DummyAPI2
+        public const string DummyAPI1 = "DummyAPI1";
+        public const string DummyAPI2 = "DummyAPI2";
     }
 }
