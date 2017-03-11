@@ -5,8 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Data.SqlClient;
 using System.Net.NetworkInformation;
-using System.Security.Principal;
-//-
+
 namespace LeaderAnalytics.AdaptiveClient
 {
     public class NetworkUtilities : INetworkUtilities

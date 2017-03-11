@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-//using NUnit.Framework;
+using Xunit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Autofac;
 using LeaderAnalytics.AdaptiveClient;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
@@ -19,8 +19,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public AutofacRegistrationHelper registrationHelper;
         public string LogMessage;
 
-        [TestInitialize]
-        public void Setup()
+        public BaseTest()
         {
             string dir = Path.Combine(Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.FullName,"EndPoints.json");
             

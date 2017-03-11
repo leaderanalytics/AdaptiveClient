@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.ServiceModel;
 using Autofac;
 
 namespace LeaderAnalytics.AdaptiveClient
@@ -38,13 +37,6 @@ namespace LeaderAnalytics.AdaptiveClient
                 throw new ComponentNotRegisteredException($"An attempt to resolve an EndPointValidator for EndPointType { endPointType } failed.  Use the RegisterEndPointValidator method on the RegistrationHelper to register an EndPointValidator for each EndPointType.");
 
             return result;
-        }
-
-        public static ChannelFactory<TInterface> ResolveChannelFactory<TInterface>(IComponentContext cxt, string url)
-        {
-            IEndPointConfiguration ep = (cxt.Resolve<Func<IEndPointConfiguration>>())();
-            // Todo: need to resolve ChannelFactory
-            return new ChannelFactory<TInterface>(new BasicHttpBinding(), new EndpointAddress(ep.ConnectionString + url));
         }
     }
 }

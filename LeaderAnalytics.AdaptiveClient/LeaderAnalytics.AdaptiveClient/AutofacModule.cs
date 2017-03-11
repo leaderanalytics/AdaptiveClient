@@ -16,7 +16,7 @@ namespace LeaderAnalytics.AdaptiveClient
             builder.RegisterType<NetworkUtilities>().As<INetworkUtilities>();
             builder.Register<Func<IEndPointConfiguration>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return () => cxt.Resolve<EndPointContext>().CurrentEndPoint; });
             builder.Register<Func<Type, IPerimeter>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return t => ResolutionHelper.ResolvePerimeter(cxt, t); });
-            builder.Register<Func<string, IEndPointValidator>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ep => cxt.ResolveKeyed<IEndPointValidator>(ep); });
+            builder.Register<Func<string, IEndPointValidator>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return ep => ResolutionHelper.ResolveValidator(cxt, ep); });
             builder.RegisterType<EndPointContext>().InstancePerLifetimeScope();     // per lifetimescope - see notes in EndPointContext.cs
             builder.RegisterType<EndPointCache>().SingleInstance();                 // singleton
             builder.RegisterGeneric(typeof(ClientFactory<>)).As(typeof(IClientFactory<>));
