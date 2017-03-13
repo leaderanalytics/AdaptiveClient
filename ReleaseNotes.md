@@ -1,6 +1,6 @@
 # AdaptiveClient Release Notes
 
-## Version 0.16.2 (2017-03-01)
+## Version 0.16.5 (2017-03-01)
 ### Breaking change
 The `EndPointType` enum was replaced with a string.  The purpose is to allow greater flexibility when matching a client implementation of a specific version to a server.  Suggested replacement for `EndPointType` enum is a simple class like the following:
 
