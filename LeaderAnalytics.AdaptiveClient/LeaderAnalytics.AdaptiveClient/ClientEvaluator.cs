@@ -59,5 +59,48 @@ namespace LeaderAnalytics.AdaptiveClient
                 Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
             }
         }
+
+        public async Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> method, params string[] overrideNames)
+        {
+            TResult result = default(TResult);
+            Func<T, Task> proxy = async x => result = await method(x);
+            await TryInternalAsync(proxy, overrideNames);
+            return result;
+        }
+
+        public async Task TryAsync(Func<T, Task> method, params string[] overrideNames)
+        {
+            await TryInternalAsync(method, overrideNames);
+        }
+
+        private async Task TryInternalAsync(Func<T, Task> method, params string[] overrideNames)
+        {
+            SetAvailableEndPoints(overrideNames);
+            bool success = false;
+
+            foreach (T client in ClientEnumerator())
+            {
+                try
+                {
+                    await method(client);
+                    success = true;
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // All errors are assumed to be connectivity errors. The server is responsible for its own error handling.
+                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}.  ";
+                    errorMsg += $"The service name is {typeof(T).Name}.  The content of the exception is: " + ex.ToString();
+
+                    if (logger != null)
+                        logger(errorMsg);
+                }
+            }
+
+            if (!success)
+            {
+                Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
+            }
+        }
     }
 }

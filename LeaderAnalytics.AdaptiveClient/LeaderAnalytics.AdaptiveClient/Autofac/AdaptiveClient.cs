@@ -89,5 +89,24 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
                 return result;
             }
         }
+
+        public async Task TryAsync(Func<T, Task> method, params string[] endPointNames)
+        {
+            using (ILifetimeScope scope = container.BeginLifetimeScope())
+            {
+                IClientEvaluator<T> evaluator = scope.Resolve<IClientEvaluator<T>>();
+                await evaluator.TryAsync(method, endPointNames);
+            }
+        }
+
+        public async Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> method, params string[] endPointNames)
+        {
+            using (ILifetimeScope scope = container.BeginLifetimeScope())
+            {
+                IClientEvaluator<T> evaluator = scope.Resolve<IClientEvaluator<T>>();
+                TResult result = await evaluator.Try(method, endPointNames);
+                return result;
+            }
+        }
     }
 }
