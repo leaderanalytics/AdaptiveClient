@@ -54,7 +54,7 @@ For example, a mobile user who is on-site and connected to a local area network 
 ## How it works
 `AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container.  The client and utility classes included in this download assist you in implementing the pattern.  This download includes a client implementation based on Autofac.  You should be able to implement similar functionality using other DI containers.  
 
-The functionality provided by `AdaptiveClient` comes primarily from the four classes shown below and their supporting classes:
+The functionality provided by `AdaptiveClient` comes primarily from the classes shown below and their supporting classes:
 
 
     EndPointConfiguration
@@ -70,11 +70,20 @@ An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection strin
 * **IsActive**:  Set this value to false to prevent using this `EndPointConfiguration`.
 
 &nbsp;
+
+    EndPointValidator
+
+An `EndPointValidator` is class that is used to determine if an EndPoint is available.  You may use whatever method you wish to determine EndPoint availability.  The default HTTP EndPointValidator works by sending a request to the server
      
     ClientFactory
 
-Given an interface and a collection of `EndPointConfiguration` objects,  `ClientFactory` will iterate over the EndPoints starting with the most preferred.  Upon finding an available EndPoint `ClientFactory` will return a suitable client that implements the desired interface.
+`ClientFactory` iterates over a collection of EndPoints starting with the most preferred and uses an instance of an `EndPointValidator` to determine if a EndPoint is available.    Upon finding an available EndPoint `ClientFactory` will return a suitable client that implements the desired interface.
 
+
+    ClientEvaluator
+
+
+`ClientEvaluator`  works much the same way as `ClientFactory` except `ClientEvaluator` works by executing the requested method instead of using an `EndPointValidator` to locate a working server.  If the call is successful the requested result is returned (as opposed to `ClientFactory` which returns an instance of the client).
 
     RegistrationHelper
 
@@ -82,7 +91,7 @@ RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper`
 
     AdaptiveClient
 
-`AdaptiveClient`  is the second of the two Autofac-specific classes.  `AdaptiveClient` is little more than a wrapper around ClientFactory that insures that objects created within one of the `AdaptiveClient.Call()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the `AdaptiveClient` pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
+`AdaptiveClient`  is the second of the two Autofac-specific classes.  `AdaptiveClient` is little more than a wrapper around `ClientFactory` and `ClientEvaluator` that insures that objects created within one of the `Call()` or `Try()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the `AdaptiveClient` pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
 
 
 ## How `AdaptiveClient` resolves a client from start to finish: 
