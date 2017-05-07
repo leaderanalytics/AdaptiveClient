@@ -14,5 +14,7 @@ namespace LeaderAnalytics.AdaptiveClient
         Task<TResult> CallAsync<TResult>(Func<T, Task<TResult>> method, params string[] endPointNames);
         void Try(Action<T> evaluator, params string[] endPointNames);
         TResult Try<TResult>(Func<T, TResult> evaluator, params string[] endPointNames);
+        Task TryAsync(Func<T, Task> evaluator, params string[] overrideNames);
+        Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> evaluator, params string[] endPointNames);
     }
 }
