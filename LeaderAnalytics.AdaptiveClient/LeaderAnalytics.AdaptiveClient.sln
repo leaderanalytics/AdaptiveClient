@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderAnalytics.AdaptiveClient", "LeaderAnalytics.AdaptiveClient\LeaderAnalytics.AdaptiveClient.csproj", "{819FEB01-A162-4128-B20F-894FC3701D78}"
 EndProject
@@ -51,5 +51,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A20A0F8-2052-4B19-AB76-C4CCA0F2ABBE}
 	EndGlobalSection
 EndGlobal
