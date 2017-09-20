@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net461;netstandard1.3</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Sam Wheat</Authors>
     <Company>Leader Analytics</Company>
@@ -13,18 +13,15 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Leader Analytics LeaderAnalytics AdaptiveClient Adaptive Client Repository MVC MVVM WebAPI WCF AutoFac Entity Framework fallback fall back</PackageTags>
     <PackageReleaseNotes>See Repository</PackageReleaseNotes>
-    <Version>0.18.0</Version>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <Version>0.18.1</Version>
+    <AssemblyVersion>0.18.1.0</AssemblyVersion>
     <FileVersion>0.18.0.0</FileVersion>
     <PackageId>AdaptiveClient</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="2.0.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.2" />
     <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="nuget\pkg\" />
   </ItemGroup>
 </Project>
