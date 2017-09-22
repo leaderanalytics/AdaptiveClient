@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Xunit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Autofac;
+using NUnit.Framework;
 using LeaderAnalytics.AdaptiveClient;
 
 
@@ -21,8 +21,14 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
         public BaseTest()
         {
-            string dir = Path.Combine(Directory.GetParent(AppContext.BaseDirectory).Parent.Parent.FullName,"EndPoints.json");
-            
+        
+        }
+
+        [SetUp]
+        public void Setup()
+        {
+            string dir = Path.Combine(AppContext.BaseDirectory, "EndPoints.json");
+
             builder = new ContainerBuilder();
             JObject obj = JsonConvert.DeserializeObject(File.ReadAllText(dir)) as JObject;
             List<EndPointConfiguration> endPoints = obj["EndPointConfigurations"].ToObject<List<EndPointConfiguration>>();

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LeaderAnalytics.AdaptiveClient;
-using Xunit;
+using NUnit.Framework;
 using Autofac;
 using Moq;
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
 {
+    [TestFixture]
     public class TryTests : BaseTest
     {
-        [Fact]
+        [Test]
         public void Reslove_InProcessClient_of_type_IDummyAPI1()
         {
             Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
@@ -23,12 +24,12 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(api => api.GetString(), null);
-            Assert.Equal("Application_SQL1", client1.CurrentEndPoint.Name);
-            Assert.Equal("InProcessClient1", result);
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result);
         }
 
 
-        [Fact]
+        [Test]
         public void Reslove_InProcessClientAsync_of_type_IDummyAPI1()
         {
             Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
@@ -40,12 +41,12 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(async api => await api.GetStringAsync(), null).Result;
-            Assert.Equal("Application_SQL1", client1.CurrentEndPoint.Name);
-            Assert.Equal("InProcessClient1", result);
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result);
         }
 
 
-        [Fact]
+        [Test]
         public void Reslove_WebAPIClient_of_type_IDummyAPI1()
         {
             Moq.Mock<IDummyAPI1> inProcessClientMock = new Mock<IDummyAPI1>();
@@ -57,11 +58,11 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(x => x.GetString(), null);
-            Assert.Equal("WebAPIClient1", result);
+            Assert.AreEqual("WebAPIClient1", result);
         }
 
 
-        [Fact]
+        [Test]
         public void Uses_cached_endpoint_on_second_call()
         {
             int inProcessCalls = 0;
@@ -75,19 +76,19 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
 
             // do it again and use the cached endpoint:
 
             IAdaptiveClient<IDummyAPI1> client2 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result2 = client2.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
         }
 
 
-        [Fact]
+        [Test]
         public void Uses_cached_endpoint_on_third_call_after_override_on_second_call()
         {
             int inProcessCalls = 0;
@@ -101,28 +102,28 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
 
             //  use the Application_WebAPI1A EndPoint by passing it to the client as an override
 
             LogMessage = null;
             result = client1.Try(x => x.GetString(), "Application_WebAPI1A");
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
 
 
             // do it again and use the cached endpoint which is still Application_WebAPI1A:
 
             IAdaptiveClient<IDummyAPI1> client2 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result2 = client2.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
+            Assert.AreEqual(1, inProcessCalls);
         }
 
 
-        [Fact]
+        [Test]
         public void Uses_next_endpoint_when_cached_endpoint_fails_on_second_call()
         {
             int inProcessCalls = 0;
@@ -142,28 +143,28 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(1, inProcessCalls);
-            Assert.Equal(1, webAPICalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
+            Assert.AreEqual(1, webAPICalls);
 
             // Application_WebAPI1 is the cached EndPoint.  We expect it to fail on this call and we use Application_WebAPI1A
 
             result = client1.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal("Application_WebAPI1A", client1.CurrentEndPoint.Name);
-            Assert.Equal(3, webAPICalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual("Application_WebAPI1A", client1.CurrentEndPoint.Name);
+            Assert.AreEqual(3, webAPICalls);
 
             // do it again and use the cached endpoint which is still Application_WebAPI1A:
 
             IAdaptiveClient<IDummyAPI1> client2 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result2 = client2.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(client1.CurrentEndPoint.Name, "Application_WebAPI1A");
+            Assert.AreEqual(1, inProcessCalls);
         }
 
 
-        [Fact]
+        [Test]
         public void Throws_when_invalid_EndPoint_name_is_passed_as_override()
         {
             int inProcessCalls = 0;
@@ -177,8 +178,8 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             string result = client1.Try(x => x.GetString());
-            Assert.Equal("WebAPIClient1", result);
-            Assert.Equal(1, inProcessCalls);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
 
             // cached EndPoint is set but we are going to pass an invalid name
 
