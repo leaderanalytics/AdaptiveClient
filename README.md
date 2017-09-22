@@ -39,6 +39,12 @@ public partial class MainWindow : Window
 
 &nbsp;
 
+|Your comments are appreciated!
+| :---- |
+| Does AdaptiveClient fit in with your architecture?  Is the documentation clear on how to use it?  Is there functionality you need that is missing?  Please create an issue here on GitHub and let us know what you think. 
+
+&nbsp;
+
 
 
 ## What AdaptiveClient does
