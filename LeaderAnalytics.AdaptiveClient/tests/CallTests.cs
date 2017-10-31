@@ -92,5 +92,29 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual(1, inProcessCalls);   // We should not test the in process endpoint again - we go directly to the cached HTTP endpoint.
             Assert.AreEqual(1, webAPICalls);
         }
+
+
+        [Test]
+        public void Client_exception_is_propagated()
+        {
+            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
+            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
+            networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
+            INetworkUtilities networkUtil = networkUtilMock.Object;
+            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+
+            Moq.Mock<IDummyAPI1> inProcessClientMock = new Mock<IDummyAPI1>();
+            inProcessClientMock.Setup(x => x.GetString()).Throws(new Exception("InProcess Exception"));
+            IDummyAPI1 inProcessClient = inProcessClientMock.Object;
+            builder.RegisterInstance(inProcessClient).Keyed<IDummyAPI1>(EndPointType.InProcess);
+
+            IContainer container = builder.Build();
+
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            Exception ex = Assert.Throws<Exception>(() => client1.Call(x => x.GetString()));
+
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcess Exception", ex.Message);
+        }
     }
 }

@@ -186,5 +186,34 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             IAdaptiveClient<IDummyAPI1> client2 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             Assert.Throws<Exception>(() => client2.Try(x => x.GetString(), "does not exist"));
         }
+
+
+        [Test]
+        public void Inner_exceptions_are_maintained_for_each_client_call()
+        {
+            // We catch and log the error if a client throws - however we don't propagate errors unless
+            // we run out of endpoints to try.  This test asserts that errors from each client are maintained 
+            // and propagated as inner exceptions when we exhaust all endpoints.
+
+            Moq.Mock<IDummyAPI1> inProcessClientMock = new Mock<IDummyAPI1>();
+            inProcessClientMock.Setup(x => x.GetString()).Throws(new Exception("InProcess Exception"));
+            IDummyAPI1 inProcessClient = inProcessClientMock.Object;
+            builder.RegisterInstance(inProcessClient).Keyed<IDummyAPI1>(EndPointType.InProcess);
+
+            Moq.Mock<IDummyAPI1> webAPIClientMock = new Mock<IDummyAPI1>();
+            webAPIClientMock.Setup(x => x.GetString()).Throws(new Exception("WebAPI Exception"));
+            IDummyAPI1 webAPIClient = webAPIClientMock.Object;
+            builder.RegisterInstance(webAPIClient).Keyed<IDummyAPI1>(EndPointType.HTTP);
+            IContainer container = builder.Build();
+
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            Exception ex = Assert.Throws<Exception>(() =>  client1.Try(x => x.GetString()));
+            Assert.AreEqual(3, ((AggregateException)(ex.InnerException)).InnerExceptions.Count);
+            
+            // Assert that the error thrown by the client is maintained
+            Assert.AreEqual("InProcess Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[0].InnerException.Message);
+            Assert.AreEqual("WebAPI Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[1].InnerException.Message);
+            Assert.AreEqual("WebAPI Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[2].InnerException.Message);
+        }
     }
 }
