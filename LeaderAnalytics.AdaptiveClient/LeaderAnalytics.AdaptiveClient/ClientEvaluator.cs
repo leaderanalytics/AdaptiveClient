@@ -46,7 +46,6 @@ namespace LeaderAnalytics.AdaptiveClient
                 }
                 catch (Exception ex)
                 {
-                    // All errors are assumed to be connectivity errors. The server is responsible for its own error handling.
                     string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. The connection string is {CachedEndPoint.ConnectionString}. See the inner exception for more detail.";
 
                     if (exceptions == null)
@@ -87,6 +86,7 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             SetAvailableEndPoints(overrideNames);
             bool success = false;
+            List<Exception> exceptions = null;
 
             foreach (T client in ClientEnumerator())
             {
@@ -98,9 +98,12 @@ namespace LeaderAnalytics.AdaptiveClient
                 }
                 catch (Exception ex)
                 {
-                    // All errors are assumed to be connectivity errors. The server is responsible for its own error handling.
-                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}.  ";
-                    errorMsg += $"The service name is {typeof(T).Name}.  The content of the exception is: " + ex.ToString();
+                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. The connection string is {CachedEndPoint.ConnectionString}. See the inner exception for more detail.";
+
+                    if (exceptions == null)
+                        exceptions = new List<Exception>(10);
+
+                    exceptions.Add(new Exception(errorMsg, ex));  // We log but don't throw unless we run out of endpoints
 
                     if (logger != null)
                         logger(errorMsg);
@@ -109,7 +112,12 @@ namespace LeaderAnalytics.AdaptiveClient
 
             if (!success)
             {
-                Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
+                AggregateException aggEx = null;
+
+                if (exceptions != null)
+                    aggEx = new AggregateException(exceptions);
+
+                Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
             }
         }
     }
