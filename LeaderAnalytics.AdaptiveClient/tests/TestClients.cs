@@ -55,7 +55,6 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         }
     }
 
-
     public class InProcessClient2 : IDummyAPI2
     {
         public int GetInt()
@@ -75,6 +74,25 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public int GetInt()
         {
             return 2;
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
+
+    public class InProcessClient3 : IDummyAPI1
+    {
+        public string GetString()
+        {
+            return "InProcessClient3";
+        }
+
+        public async Task<string> GetStringAsync()
+        {
+            await Task.Delay(2000);
+            return GetString();
         }
 
         public void Dispose()

@@ -11,4 +11,10 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public const string DummyAPI1 = "DummyAPI1";
         public const string DummyAPI2 = "DummyAPI2";
     }
+
+    public static class ProviderName
+    {
+        public const string MSSQL = "System.Data.SqlClient";
+        public const string MySQL = "MySQL";
+    }
 }

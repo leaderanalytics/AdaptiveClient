@@ -8,8 +8,8 @@ namespace LeaderAnalytics.AdaptiveClient
     public abstract class BaseClientFactory<T>
     {
         protected Func<Type, IPerimeter> epcFactory;
-        protected Func<string, T> serviceFactory;
-        protected Func<string, IEndPointValidator> validatorFactory;
+        protected Func<string, string, T> serviceFactory;
+        protected Func<string, string, IEndPointValidator> validatorFactory;
         protected EndPointCache endPointCache;
         protected EndPointContext endPointContext;
         protected readonly IPerimeter perimeter;
@@ -27,8 +27,8 @@ namespace LeaderAnalytics.AdaptiveClient
 
         public BaseClientFactory(
            Func<Type, IPerimeter> epcFactory,
-           Func<string, T> serviceFactory,
-           Func<string, IEndPointValidator> validatorFactory,
+           Func<string, string, T> serviceFactory,
+           Func<string, string, IEndPointValidator> validatorFactory,
            EndPointCache endPointCache,
            EndPointContext endPointContext,
            Action<string> logger)
@@ -83,7 +83,7 @@ namespace LeaderAnalytics.AdaptiveClient
             {
                 // endPointContext.CurrentEndPoint must be set at this point because calling serviceFactory will attempt to new up a T.
                 endPointContext.CurrentEndPoint = CachedEndPoint;
-                T client = serviceFactory(CachedEndPoint.EndPointType);
+                T client = serviceFactory(CachedEndPoint.EndPointType, CachedEndPoint.ProviderName);
 
                 if (client != null)
                     yield return client;

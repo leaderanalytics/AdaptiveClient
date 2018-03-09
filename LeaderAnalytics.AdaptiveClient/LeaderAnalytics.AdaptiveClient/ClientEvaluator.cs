@@ -9,7 +9,7 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         public ClientEvaluator(
             Func<Type, IPerimeter> epcFactory,
-            Func<string, T> serviceFactory,
+            Func<string, string, T> serviceFactory,
             EndPointCache endPointCache,
             EndPointContext endPointContext,
             Action<string> logger) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext, logger)
@@ -46,7 +46,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 }
                 catch (Exception ex)
                 {
-                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. The connection string is {CachedEndPoint.ConnectionString}. See the inner exception for more detail.";
+                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. See the inner exception for more detail.";
 
                     if (exceptions == null)
                         exceptions = new List<Exception>(10);

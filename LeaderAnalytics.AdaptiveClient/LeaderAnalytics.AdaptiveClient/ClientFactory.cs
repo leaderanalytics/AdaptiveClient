@@ -10,8 +10,8 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         public ClientFactory(
             Func<Type, IPerimeter> epcFactory,
-            Func<string, T> serviceFactory,
-            Func<string, IEndPointValidator> validatorFactory,
+            Func<string, string, T> serviceFactory,
+            Func<string, string, IEndPointValidator> validatorFactory,
             EndPointCache endPointCache,
             EndPointContext endPointContext,
             Action<string> logger) : base(epcFactory, serviceFactory, validatorFactory, endPointCache, endPointContext, logger)
@@ -32,13 +32,11 @@ namespace LeaderAnalytics.AdaptiveClient
             IEndPointConfiguration cachedEndPoint = CachedEndPoint;
 
             if (cachedEndPoint != null)
-            {
-                return serviceFactory(cachedEndPoint.EndPointType);
-            }
+                return serviceFactory(cachedEndPoint.EndPointType, cachedEndPoint.ProviderName);
 
             foreach (T client in ClientEnumerator())
             {
-                IEndPointValidator validator = validatorFactory(CachedEndPoint.EndPointType);
+                IEndPointValidator validator = validatorFactory(CachedEndPoint.EndPointType, CachedEndPoint.ProviderName);
 
                 if (!validator.IsInterfaceAlive(CachedEndPoint))
                 {

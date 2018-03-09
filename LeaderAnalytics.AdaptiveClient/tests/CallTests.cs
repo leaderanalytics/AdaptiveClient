@@ -17,7 +17,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         interface IDummy3 :IDisposable { string GetString(); } // Not registered
 
         [Test]
-        public void Reslove_InProcessClient_of_type_IDummyAPI1()
+        public void Reslove_InProcessClient1_of_type_IDummyAPI1()
         {
             Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
             networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
@@ -30,6 +30,43 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result = client1.Call(x => x.GetString());
             Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcessClient1", result);
+        }
+
+        [Test]
+        public void Reslove_InProcessClient3_of_type_IDummyAPI1()
+        {
+            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
+            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(It.Is<string>(z => z == EndPoints.First(y => y.Name == "Application_MySQL1").ConnectionString))).Returns(true);
+            networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
+            INetworkUtilities networkUtil = networkUtilMock.Object;
+            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+            IContainer container = builder.Build();
+
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            string result = client1.Call(x => x.GetString());
+            Assert.AreEqual("Application_MySQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient3", result);
+        }
+
+
+        [Test]
+        public void Reslove_InProcessClient3_of_type_IDummyAPI1_when_EndPaoint_name_is_passed()
+        {
+            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
+            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
+            networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
+            INetworkUtilities networkUtil = networkUtilMock.Object;
+            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+            IContainer container = builder.Build();
+
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            string result = client1.Call(x => x.GetString());
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result);
+
+            string result2 = client1.Call(x => x.GetString(), "Application_MySQL1");
+            Assert.AreEqual("Application_MySQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient3", result2);
         }
 
         [Test]
@@ -46,7 +83,6 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result = client1.Call(x => x.GetString());
             Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result);
-            Assert.AreEqual("Failed to connect to EndPoint named Application_SQL1 when resolving a client of type LeaderAnalytics.AdaptiveClient.Tests.IDummyAPI1.", LogMessage);
         }
 
         [Test]
@@ -80,7 +116,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result = client1.Call(x => x.GetString());
             Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result);
-            Assert.AreEqual(1, inProcessCalls);
+            Assert.AreEqual(3, inProcessCalls);
             Assert.AreEqual(1, webAPICalls);
             
             // do it again and use the cached endpoint:
@@ -89,7 +125,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result2 = client2.Call(x => x.GetString());
             Assert.AreEqual("Application_WebAPI1", client2.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result2);
-            Assert.AreEqual(1, inProcessCalls);   // We should not test the in process endpoint again - we go directly to the cached HTTP endpoint.
+            Assert.AreEqual(3, inProcessCalls);   // We should not test the in process endpoint again - we go directly to the cached HTTP endpoint.
             Assert.AreEqual(1, webAPICalls);
         }
 
@@ -106,7 +142,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Moq.Mock<IDummyAPI1> inProcessClientMock = new Mock<IDummyAPI1>();
             inProcessClientMock.Setup(x => x.GetString()).Throws(new Exception("InProcess Exception"));
             IDummyAPI1 inProcessClient = inProcessClientMock.Object;
-            builder.RegisterInstance(inProcessClient).Keyed<IDummyAPI1>(EndPointType.InProcess);
+            builder.RegisterInstance(inProcessClient).Keyed<IDummyAPI1>(EndPointType.InProcess + ProviderName.MSSQL);
 
             IContainer container = builder.Build();
 
