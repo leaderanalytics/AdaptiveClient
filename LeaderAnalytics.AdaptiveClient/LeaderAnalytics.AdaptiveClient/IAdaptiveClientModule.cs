@@ -2,6 +2,6 @@
 {
     public interface IAdaptiveClientModule
     {
-        void Register(IRegistrationHelper registrationHelper);
+        void Register(RegistrationHelper registrationHelper);
     }
 }

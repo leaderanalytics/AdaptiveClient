@@ -116,7 +116,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result = client1.Call(x => x.GetString());
             Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result);
-            Assert.AreEqual(3, inProcessCalls);
+            Assert.AreEqual(2, inProcessCalls);
             Assert.AreEqual(1, webAPICalls);
             
             // do it again and use the cached endpoint:
@@ -125,7 +125,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             string result2 = client2.Call(x => x.GetString());
             Assert.AreEqual("Application_WebAPI1", client2.CurrentEndPoint.Name);
             Assert.AreEqual("WebAPIClient1", result2);
-            Assert.AreEqual(3, inProcessCalls);   // We should not test the in process endpoint again - we go directly to the cached HTTP endpoint.
+            Assert.AreEqual(2, inProcessCalls);   // We should not test the in process endpoint again - we go directly to the cached HTTP endpoint.
             Assert.AreEqual(1, webAPICalls);
         }
 

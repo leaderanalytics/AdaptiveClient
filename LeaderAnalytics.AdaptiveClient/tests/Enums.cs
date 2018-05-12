@@ -16,5 +16,6 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
     {
         public const string MSSQL = "System.Data.SqlClient";
         public const string MySQL = "MySQL";
+        public const string HTTP = "HTTP";
     }
 }

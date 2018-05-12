@@ -17,7 +17,7 @@ namespace LeaderAnalytics.AdaptiveClient
 
         public IEndPointConfiguration CachedEndPoint
         {
-            // "Current" and "Cached" are not the same - do not set EndPointContext.CurentEndPoint here.
+            // "Current" and "Cached" are not the same -  do not set EndPointContext.CurentEndPoint here.
             get { return endPointCache.GetEndPoint(perimeter.API_Name); }
 
             protected set { endPointCache.SetEndPoint(perimeter.API_Name, value); }

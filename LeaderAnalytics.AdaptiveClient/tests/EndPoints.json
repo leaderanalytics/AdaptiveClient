@@ -9,14 +9,6 @@
       "ProviderName": "System.Data.SqlClient",
       "ConnectionString": "Data Source=.\\SQLEXPRESS;Initial Catalog=AdaptiveClientDemo;Integrated Security=True;MultipleActiveResultSets=True"
     },
-    {
-      "Name": "Application_NoProvider",
-      "IsActive": "true",
-      "API_Name": "DummyAPI1",
-      "Preference": "22",
-      "EndPointType": "InProcess",
-      "ConnectionString": "Data Source=.\\SQLEXPRESS;Initial Catalog=AdaptiveClientDemo;Integrated Security=True;MultipleActiveResultSets=True"
-    },
 
     {
       "Name": "Application_MySQL1",
@@ -34,7 +26,7 @@
       "API_Name": "DummyAPI1",
       "Preference": "30",
       "EndPointType": "HTTP",
-      "ProviderName": "",
+      "ProviderName": "HTTP",
       "ConnectionString": "http://localhost:61426/api/"
     },
 
@@ -44,7 +36,7 @@
       "API_Name": "DummyAPI1",
       "Preference": "40",
       "EndPointType": "HTTP",
-      "ProviderName": "",
+      "ProviderName": "HTTP",
       "ConnectionString": "http://localhost:98765/api/"
     },
 
@@ -64,7 +56,7 @@
       "API_Name": "DummyAPI2",
       "Preference": "30",
       "EndPointType": "HTTP",
-      "ProviderName": "",
+      "ProviderName": "HTTP",
       "ConnectionString": "http://localhost:61426/api/"
     }
   ]

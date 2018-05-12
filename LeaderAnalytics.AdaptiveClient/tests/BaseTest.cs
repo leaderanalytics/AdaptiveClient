@@ -16,9 +16,9 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
     public class BaseTest
     {
         public ContainerBuilder builder;
-        public AutofacRegistrationHelper registrationHelper;
+        public RegistrationHelper registrationHelper;
         public List<string> LogMessages;
-        public List<EndPointConfiguration> EndPoints;
+        public List<IEndPointConfiguration> EndPoints;
 
         public BaseTest()
         {
@@ -29,41 +29,38 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         public void Setup()
         {
             LogMessages = new List<string>();
-            string dir = Path.Combine(AppContext.BaseDirectory, "EndPoints.json");
             builder = new ContainerBuilder();
-            JObject obj = JsonConvert.DeserializeObject(File.ReadAllText(dir)) as JObject;
-            EndPoints = obj["EndPointConfigurations"].ToObject<List<EndPointConfiguration>>();
-            registrationHelper = new AutofacRegistrationHelper(builder);
+            EndPoints = EndPointUtilities.LoadEndPoints("EndPoints.json").ToList();
+            registrationHelper = new RegistrationHelper(builder);
             registrationHelper.RegisterModule(new AdaptiveClientModule(EndPoints, msg => this.LogMessages.Add(msg)));
         }
     }
 
     public class AdaptiveClientModule : IAdaptiveClientModule
     {
-        private List<EndPointConfiguration> EndPoints;
+        private List<IEndPointConfiguration> EndPoints;
         private Action<string> Logger;
 
-        public AdaptiveClientModule(List<EndPointConfiguration> endPoints, Action<string> logger)
+        public AdaptiveClientModule(List<IEndPointConfiguration> endPoints, Action<string> logger)
         {
             EndPoints = endPoints;
             Logger = logger;
         }
 
-        public void Register(IRegistrationHelper registrationHelper)
+        public void Register(RegistrationHelper registrationHelper)
         {
             registrationHelper
                 .RegisterEndPoints(EndPoints)
-                .Register<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1, ProviderName.MSSQL)
-                .Register<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1)
-                .Register<InProcessClient3, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1, ProviderName.MySQL)
-                .Register<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1)
-                .Register<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2)
-                .Register<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1)
+                .RegisterService<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1, ProviderName.MSSQL)
+                .RegisterService<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1,ProviderName.MySQL)
+                .RegisterService<InProcessClient3, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1, ProviderName.MySQL)
+                .RegisterService<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1, ProviderName.HTTP)
+                .RegisterService<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2, ProviderName.MSSQL)
+                .RegisterService<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1, ProviderName.HTTP)
                 .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MSSQL)
                 .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MySQL)
-                .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess)
-                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.WCF, null)
-                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.HTTP, null)
+                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.WCF, ProviderName.HTTP)
+                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.HTTP, ProviderName.HTTP)
                 .RegisterLogger(Logger);
         }
     }
