@@ -7,7 +7,7 @@ using Autofac;
 namespace LeaderAnalytics.AdaptiveClient.Autofac
 {
 
-    // Todo:  Some redundant code here - need to refactor.  Dont want to implement IDisposable we don't want the consumer of this class to have to 
+    // Todo:  Some redundant code here - need to refactor.  Don't want to implement IDisposable we don't want the consumer of this class to have to 
     // deal with disposing of it. 
 
     public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class, IDisposable
@@ -104,7 +104,7 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
             using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
                 IClientEvaluator<T> evaluator = scope.Resolve<IClientEvaluator<T>>();
-                TResult result = await evaluator.Try(method, endPointNames);
+                TResult result = await evaluator.TryAsync(method, endPointNames);
                 return result;
             }
         }
