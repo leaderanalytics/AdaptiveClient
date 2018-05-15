@@ -26,7 +26,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
         public async Task<string> GetStringAsync()
         {
-            await Task.Delay(2000);
+            await Task.Delay(1);
             return GetString();
         }
 
@@ -45,7 +45,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
         public async Task<string> GetStringAsync()
         {
-            await Task.Delay(2000);
+            await Task.Delay(1);
             return GetString();
         }
 
@@ -91,7 +91,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
         public async Task<string> GetStringAsync()
         {
-            await Task.Delay(2000);
+            await Task.Delay(1);
             return GetString();
         }
 

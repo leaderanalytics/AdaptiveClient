@@ -11,12 +11,14 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         public readonly ContainerBuilder Builder;
         public Dictionary<string, IPerimeter> EndPointDict;
+        public Dictionary<string, string> ServiceRegistrations;
 
         public RegistrationHelper(ContainerBuilder builder)
         {
             this.Builder = builder ?? throw new ArgumentNullException("builder");
             builder.RegisterModule(new AutofacModule());
             EndPointDict = new Dictionary<string, IPerimeter>();
+            ServiceRegistrations = new Dictionary<string, string>();
         }
 
         //public RegistrationHelper(SomeOtherBuilder builder)

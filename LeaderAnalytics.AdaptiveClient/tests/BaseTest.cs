@@ -55,8 +55,10 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
                 .RegisterService<InProcessClient1, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1,ProviderName.MySQL)
                 .RegisterService<InProcessClient3, IDummyAPI1>(EndPointType.InProcess, APINames.DummyAPI1, ProviderName.MySQL)
                 .RegisterService<WebAPIClient1, IDummyAPI1>(EndPointType.HTTP, APINames.DummyAPI1, ProviderName.HTTP)
+
                 .RegisterService<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2, ProviderName.MSSQL)
-                .RegisterService<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI1, ProviderName.HTTP)
+                .RegisterService<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI2, ProviderName.HTTP)
+                
                 .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MSSQL)
                 .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MySQL)
                 .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.WCF, ProviderName.HTTP)

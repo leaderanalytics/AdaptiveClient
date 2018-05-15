@@ -152,5 +152,42 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcess Exception", ex.Message);
         }
+
+        [Test]
+        public async Task CurrentEndPoint_is_thread_safe()
+        {
+            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
+            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
+            INetworkUtilities networkUtil = networkUtilMock.Object;
+            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+            IContainer container = builder.Build();
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            IAdaptiveClient<IDummyAPI2> client2 = container.Resolve<IAdaptiveClient<IDummyAPI2>>();
+
+            // THIS TEST FAILS -- TODO fix EndPointCache and other fixes
+
+            Task t1 = Task.Run(() => {
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    string result1 = client1.Call(x => x.GetString());
+                    Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+                    Assert.AreEqual("InProcessClient1", result1);
+                }
+            });
+
+            Task t2 = Task.Run(() => {
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    int result2 = client2.Call(x => x.GetInt());
+                    Assert.AreEqual("Application_SQL2", client2.CurrentEndPoint.Name);
+                    Assert.AreEqual(1, result2);
+                }
+            });
+
+            await Task.WhenAll(t1, t2);
+            
+        }
     }
 }

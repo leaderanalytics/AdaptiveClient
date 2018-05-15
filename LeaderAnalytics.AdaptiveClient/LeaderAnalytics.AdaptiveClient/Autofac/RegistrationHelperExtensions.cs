@@ -123,6 +123,14 @@ namespace LeaderAnalytics.AdaptiveClient
             if (perimeter == null)
                 throw new Exception($"A Perimeter named {api_name} was not found.  Call RegisterEndPoints before calling Register.");
 
+            string existingAPIRegistration = null;
+            helper.ServiceRegistrations.TryGetValue(serviceInterface.FullName, out existingAPIRegistration);
+
+            if(existingAPIRegistration != null && existingAPIRegistration != api_name)
+                throw new Exception($"A service type can be registered with only one API.  Type {serviceInterface.Name} has been registered with an API named {existingAPIRegistration}.  A second attempt to register the same type with API {api_name} is being made.");
+            else if(existingAPIRegistration == null)
+                helper.ServiceRegistrations.Add(serviceInterface.FullName, api_name);
+
             helper.Builder.RegisterInstance<IPerimeter>(perimeter).Keyed<IPerimeter>(serviceInterface);
         }
     }
