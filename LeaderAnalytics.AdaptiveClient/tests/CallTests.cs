@@ -163,16 +163,24 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             IContainer container = builder.Build();
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
             IAdaptiveClient<IDummyAPI2> client2 = container.Resolve<IAdaptiveClient<IDummyAPI2>>();
-
-            // THIS TEST FAILS -- TODO fix EndPointCache and other fixes
+            string result1 = client1.Call(x => x.GetString());
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result1);
+            int result2 = client2.Call(x => x.GetInt());
+            Assert.AreEqual("Application_SQL2", client2.CurrentEndPoint.Name);
+            Assert.AreEqual(1, result2);
 
             Task t1 = Task.Run(() => {
 
                 for (int i = 0; i < 1000; i++)
                 {
-                    string result1 = client1.Call(x => x.GetString());
+                    string r1 = client1.Call(x => x.GetString());
                     Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
-                    Assert.AreEqual("InProcessClient1", result1);
+                    Assert.AreEqual("InProcessClient1", r1);
+
+                    int r2 = client2.Call(x => x.GetInt());
+                    Assert.AreEqual("Application_SQL2", client2.CurrentEndPoint.Name);
+                    Assert.AreEqual(1, r2);
                 }
             });
 
@@ -180,13 +188,24 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
                 for (int i = 0; i < 1000; i++)
                 {
-                    int result2 = client2.Call(x => x.GetInt());
+                    int r2 = client2.Call(x => x.GetInt());
                     Assert.AreEqual("Application_SQL2", client2.CurrentEndPoint.Name);
-                    Assert.AreEqual(1, result2);
+                    Assert.AreEqual(1, r2);
+
+                    string r1 = client1.Call(x => x.GetString());
+                    Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+                    Assert.AreEqual("InProcessClient1", r1);
                 }
             });
 
-            await Task.WhenAll(t1, t2);
+            try
+            {
+                await Task.WhenAll(t1, t2);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
             
         }
     }

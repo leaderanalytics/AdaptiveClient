@@ -63,7 +63,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 if (exceptions != null)
                     aggEx = new AggregateException(exceptions);
 
-                Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
+                throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
             }
         }
 
@@ -115,7 +115,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 if (exceptions != null)
                     aggEx = new AggregateException(exceptions);
 
-                Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
+                throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
             }
         }
     }
