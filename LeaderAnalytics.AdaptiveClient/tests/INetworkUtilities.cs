@@ -1,4 +1,4 @@
-﻿namespace LeaderAnalytics.AdaptiveClient
+﻿namespace LeaderAnalytics.AdaptiveClient.Tests
 {
     public interface INetworkUtilities
     {

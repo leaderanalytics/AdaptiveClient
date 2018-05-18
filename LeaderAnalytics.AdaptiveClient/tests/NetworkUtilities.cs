@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Data.SqlClient;
 using System.Net.NetworkInformation;
 
-namespace LeaderAnalytics.AdaptiveClient
+namespace LeaderAnalytics.AdaptiveClient.Tests
 {
     public class NetworkUtilities : INetworkUtilities
     {

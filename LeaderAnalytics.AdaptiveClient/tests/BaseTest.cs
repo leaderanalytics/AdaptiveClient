@@ -32,6 +32,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             builder = new ContainerBuilder();
             EndPoints = EndPointUtilities.LoadEndPoints("EndPoints.json").ToList();
             registrationHelper = new RegistrationHelper(builder);
+            builder.RegisterModule(new AutofacModule());
             registrationHelper.RegisterModule(new AdaptiveClientModule(EndPoints, msg => this.LogMessages.Add(msg)));
         }
     }

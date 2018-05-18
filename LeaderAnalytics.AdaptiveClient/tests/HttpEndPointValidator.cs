@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace LeaderAnalytics.AdaptiveClient
+namespace LeaderAnalytics.AdaptiveClient.Tests
 {
     public class HttpEndPointValidator : IEndPointValidator
     {
