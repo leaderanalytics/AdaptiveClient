@@ -13,7 +13,6 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
-            builder.RegisterType<NetworkUtilities>().As<INetworkUtilities>();
         }
 
     }

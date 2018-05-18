@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using Autofac;
 using NUnit.Framework;
 using LeaderAnalytics.AdaptiveClient;
+using LeaderAnalytics.AdaptiveClient.Utilities;
 
 
 namespace LeaderAnalytics.AdaptiveClient.Tests
@@ -60,10 +61,10 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
                 .RegisterService<InProcessClient2, IDummyAPI2>(EndPointType.InProcess, APINames.DummyAPI2, ProviderName.MSSQL)
                 .RegisterService<WebAPIClient2, IDummyAPI2>(EndPointType.HTTP, APINames.DummyAPI2, ProviderName.HTTP)
                 
-                .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MSSQL)
-                .RegisterEndPointValidator<InProcessEndPointValidator>(EndPointType.InProcess, ProviderName.MySQL)
-                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.WCF, ProviderName.HTTP)
-                .RegisterEndPointValidator<HttpEndPointValidator>(EndPointType.HTTP, ProviderName.HTTP)
+                .RegisterEndPointValidator<MSSQL_EndPointValidator>(EndPointType.InProcess, ProviderName.MSSQL)
+                .RegisterEndPointValidator<MySQL_EndPointValidator>(EndPointType.InProcess, ProviderName.MySQL)
+                .RegisterEndPointValidator<Http_EndPointValidator>(EndPointType.WCF, ProviderName.HTTP)
+                .RegisterEndPointValidator<Http_EndPointValidator>(EndPointType.HTTP, ProviderName.HTTP)
                 .RegisterLogger(Logger);
         }
     }

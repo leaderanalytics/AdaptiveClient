@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LeaderAnalytics.AdaptiveClient;
+using LeaderAnalytics.AdaptiveClient.Utilities;
 using NUnit.Framework;
 using Autofac;
 using Moq;
@@ -15,11 +16,12 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         [Test]
         public void Reslove_InProcessClient_of_type_IDummyAPI1()
         {
-            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
-            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
-            networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
-            INetworkUtilities networkUtil = networkUtilMock.Object;
-            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+            Moq.Mock<IEndPointValidator> MSSQL_Validator_Mock = new Mock<IEndPointValidator>();
+            MSSQL_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Returns(true);
+            Moq.Mock<IEndPointValidator> HTTP_Validator_Mock = new Mock<IEndPointValidator>();
+            HTTP_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Returns(false);
+            builder.RegisterInstance(MSSQL_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.InProcess + ProviderName.MSSQL);
+            builder.RegisterInstance(HTTP_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.HTTP + ProviderName.HTTP);
             IContainer container = builder.Build();
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
@@ -27,16 +29,17 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcessClient1", result);
         }
-
+        
 
         [Test]
         public void Reslove_InProcessClientAsync_of_type_IDummyAPI1()
         {
-            Moq.Mock<INetworkUtilities> networkUtilMock = new Mock<INetworkUtilities>();
-            networkUtilMock.Setup(x => x.VerifyDBServerConnectivity(Moq.It.IsAny<string>())).Returns(true);
-            networkUtilMock.Setup(x => x.VerifyHttpServerAvailability(Moq.It.IsAny<string>())).Returns(false);
-            INetworkUtilities networkUtil = networkUtilMock.Object;
-            builder.RegisterInstance(networkUtil).As<INetworkUtilities>();
+            Moq.Mock<IEndPointValidator> MSSQL_Validator_Mock = new Mock<IEndPointValidator>();
+            MSSQL_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Returns(true);
+            Moq.Mock<IEndPointValidator> HTTP_Validator_Mock = new Mock<IEndPointValidator>();
+            HTTP_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Returns(false);
+            builder.RegisterInstance(MSSQL_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.InProcess + ProviderName.MSSQL);
+            builder.RegisterInstance(HTTP_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.HTTP + ProviderName.HTTP);
             IContainer container = builder.Build();
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
@@ -44,8 +47,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcessClient1", result);
         }
-
-
+        
         [Test]
         public void Reslove_WebAPIClient_of_type_IDummyAPI1()
         {
@@ -63,7 +65,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("WebAPIClient1", result);
         }
 
-
+        
         [Test]
         public void Uses_cached_endpoint_on_second_call()
         {
@@ -89,8 +91,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("WebAPIClient1", result);
             Assert.AreEqual(2, inProcessCalls);
         }
-
-
+        
         [Test]
         public void Uses_cached_endpoint_on_third_call_after_override_on_second_call()
         {
@@ -126,7 +127,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual(2, inProcessCalls);
         }
 
-
+        
         [Test]
         public void Uses_next_endpoint_when_cached_endpoint_fails_on_second_call()
         {
@@ -168,7 +169,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual(2, inProcessCalls);
         }
 
-
+                  
         [Test]
         public void Throws_when_invalid_EndPoint_name_is_passed_as_override()
         {
@@ -193,7 +194,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.Throws<Exception>(() => client2.Try(x => x.GetString(), "does not exist"));
         }
 
-
+        
         [Test]
         public void Inner_exceptions_are_maintained_for_each_client_call()
         {
@@ -224,7 +225,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("WebAPI Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[3].InnerException.Message);
         }
 
-
+        
         [Test]
         public async Task Inner_exceptions_are_maintained_for_each_client_call_async()
         {
