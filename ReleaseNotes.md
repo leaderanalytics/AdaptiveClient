@@ -1,5 +1,19 @@
 # AdaptiveClient Release Notes
 
+## Version 0.30.00 (2018-05-12)
+### Breaking changes
+
+1. `RegistrationHelper.Register` was renamed `RegistrationHelper.RegisterService`.  An overload was added that takes an `IEndPointConfiguration`.
+2. ProviderName is now required when registering a service or `IEndPointValidator`. 
+3. Valid ProviderName is required for all `EndPointConfigurations`.
+4. `IRegistrationHelper` interface has been deprecated.
+
+### Other changes
+* Added `EndPointUtilities` class.
+* Fixed a bug in `AdaptiveClient.Try`.
+* Refactored Registration and Resolution methods into extension methods.
+
+
 ## Version 0.16.7 (2017-03-15)
 ### Breaking changes
 

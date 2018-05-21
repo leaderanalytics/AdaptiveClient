@@ -12,6 +12,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
     {
         protected override void Load(ContainerBuilder builder)
         {
+            base.Load(builder);
         }
 
     }

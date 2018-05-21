@@ -21,8 +21,8 @@ namespace LeaderAnalytics.AdaptiveClient
 
         /// <summary>
         /// Given an interface, we find the Perimeter with whom the interface is registered.
-        /// Given the Perimeter, we find an EndPointConfiguration that is alive.
-        /// Given the EndPointType of
+        /// Using the Perimeter, we find an EndPointConfiguration that is alive.
+        /// Using the EndPointType and ProviderName of the resolved EndPointConfiguration, we find an implementation of T.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -48,8 +48,7 @@ namespace LeaderAnalytics.AdaptiveClient
                 return client;
             }
 
-            Hurl($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
-            return default(T);
+            throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.", null);
         }
     }
 }

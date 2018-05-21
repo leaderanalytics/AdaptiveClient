@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,11 +14,11 @@ namespace LeaderAnalytics.AdaptiveClient
     /// </summary>
     public class EndPointCache
     {
-        private Dictionary<string, IEndPointConfiguration> EndPoints;
+        private ConcurrentDictionary<string, IEndPointConfiguration> EndPoints;
 
         public EndPointCache()
         {
-            EndPoints = new Dictionary<string, IEndPointConfiguration>();
+            EndPoints = new ConcurrentDictionary<string, IEndPointConfiguration>();
         }
 
         public IEndPointConfiguration GetEndPoint(string apiName)
@@ -31,9 +32,9 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             if (string.IsNullOrEmpty(apiName))
                 throw new ArgumentNullException(apiName);
-
+            
             if(endPoint == null)
-                EndPoints.Remove(apiName);
+                EndPoints.TryRemove(apiName, out IEndPointConfiguration dummy);
             else
                 EndPoints[apiName] = endPoint;
         }
