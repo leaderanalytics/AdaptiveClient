@@ -52,9 +52,7 @@ namespace LeaderAnalytics.AdaptiveClient
                         exceptions = new List<Exception>(10);
 
                     exceptions.Add(new Exception(errorMsg, ex));  // We log but don't throw unless we run out of endpoints
-
-                    if (logger != null)
-                        logger(errorMsg);
+                    logger?.Invoke(errorMsg);
                 }
             }
 
