@@ -1,5 +1,7 @@
 # AdaptiveClient
-#### Library and pattern for consuming services across heterogeneous platforms and protocols.  Inject a single client that allows the application to transparently access API's using SQL client, WebAPI, REST, WCF, ESB, etc.  Gracefully fall back if preferred server or protocol becomes unavailable.
+
+#### Library and pattern for creating a granular, loosely coupled service layer.  Build interdependent services that are easily injected and accessed via a service manifest.  Inject a single client that allows the application to access all services.  Transparently access database services and APIs accross multiple transports and providers.
+
 
 ```C#
 public partial class MainWindow : Window
