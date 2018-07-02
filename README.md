@@ -17,7 +17,7 @@ public partial class MainWindow : Window
     {
         // AdaptiveClient will attempt to use the server you define as most preferred. 
         // Server may be SQL, MySQL, WCF, REST, etc. - AdaptiveClient will resolve the correct 
-        // client and all dependencies.  Your application does not need to know.
+        // client and all dependencies.  
         // If the request fails AdaptiveClient will begin an orderly fall back to any other 
         // server that can handle the request:
 
@@ -42,7 +42,7 @@ public partial class MainWindow : Window
 
 
 ## What AdaptiveClient does
-Using the traditional repository pattern you pass a connection string down to your data access layer when you need to make a database call.  If the call fails the application usually fails or is blocked.  Most applications are also unusable if the user has no database connectivity via the Local Area Network.  
+Using the traditional repository pattern you pass a connection string down to your data access layer when you need to make a database call.  If the call fails or if the server is not available the application usually fails or is blocked.  
 
 AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given it's transport protocol and data provider.  The process of resolving components is handled by the dependency injection container (Autofac).  The pattern and a few utility and helper classes are provided by AdaptiveClient.
 
