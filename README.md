@@ -1,9 +1,9 @@
 # AdaptiveClient
 
-#### Library and pattern for creating a granular, loosely coupled service layer.  Build interdependent services that are easily injected and accessed via a service manifest.  Inject a single client that allows the application to access all services.  Transparently access database services and APIs accross multiple transports and providers.
+#### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Transparently access services and APIs regardless of transport or provider.
 
 
-```C#
+```c#
 public partial class MainWindow : Window
 {
     private IAdaptiveClient<IUsersService> client;
@@ -15,12 +15,13 @@ public partial class MainWindow : Window
 
     public async Task<IActionResult> Login(int userID)
     {
-        // AdaptiveClient will use the best server available at the time the request is made. 
-        // Server may be SQL, WCF, REST, etc. - your application does not need to know or care.
-        // If the request fails AdaptiveClient will begin an orderly fall back to other 
-        // servers that can handle the request regardless of platform or protocol:
+        // AdaptiveClient will attempt to use the server you define as most preferred. 
+        // Server may be SQL, MySQL, WCF, REST, etc. - AdaptiveClient will resolve the correct 
+        // client and all dependencies.  Your application does not need to know.
+        // If the request fails AdaptiveClient will begin an orderly fall back to any other 
+        // server that can handle the request:
 
-        User user = await client.CallAsync(x => x.GetUser(userID));
+        User user = await client.TryAsync(x => x.GetUser(userID));
     }
 }
 ```
@@ -39,20 +40,12 @@ public partial class MainWindow : Window
 
 ---
 
-&nbsp;
-
-|Your comments are appreciated!
-| :---- |
-| Does AdaptiveClient fit in with your architecture?  Is the documentation clear on how to use it?  Is there functionality you need that is missing?  Please create an issue here on GitHub and let us know what you think. 
-
-&nbsp;
-
-
 
 ## What AdaptiveClient does
-Rather than make a service call directly to a specific server or type of server you make a call using `AdaptiveClient` instead.  `AdaptiveClient` will attempt to execute the call using the best available server.  If the call fails `AdaptiveClient` will make successive attempts, each time falling back to other servers of the same type or other types.
+Using the traditional repository pattern you pass a connection string down to your data access layer when you need to make a database call.  If the call fails the application usually fails or is blocked.  Most applications are also unusable if the user has no database connectivity via the Local Area Network.  
 
-For example, a mobile user who is on-site and connected to a local area network will enjoy the performance of an in-process connection directly to the database server.  If the user tries to re-connect from a remote location `AdaptiveClient` will attempt a LAN connection again but will fall back to a WebAPI server when the LAN connection fails.  Should the WebAPI connection fail, `AdaptiveClient` may attempt to connect to other WebAPI servers, a WCF server, or any other server as configured.
+AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given it's transport protocol and data provider.  The process of resolving components is handled by the dependency injection container (Autofac).  The pattern and a few utility and helper classes are provided by AdaptiveClient.
+
 
 ## Who will benefit from using it
 * `AdaptiveClient` is ideally targeted to organizations that need to give local users access to their APIs over a local area network but who also wish to expose their APIs to remote users.
@@ -60,7 +53,7 @@ For example, a mobile user who is on-site and connected to a local area network 
 
 
 ## How it works
-`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container.  The client and utility classes included in this download assist you in implementing the pattern.  This download includes a client implementation based on Autofac.  You should be able to implement similar functionality using other DI containers.  
+`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URL's) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the call.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
 
 The functionality provided by `AdaptiveClient` comes primarily from the classes shown below and their supporting classes:
 
@@ -73,81 +66,180 @@ An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection strin
 * **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
 * **Preference**:  Number that allows ClientFactory to rank this EndPoint.  Lower numbers are ranked higher (more preferred).
 * **EndPointType**:  May be one of the following:  InProcess, HTTP, WCF, ESB.  Assists ClientFactory in determining if the EndPoint is alive.  Multiple EndPointConfigurations of the same `EndPointType` may be defined for an API_Name.
+* **ProviderName**: A string that further describes the connection string data provider. Examples are "MSSQL" or "MySQL". Also used as a key to resolve services that are specific to the indicated ProviderName.
 * **ConnectionString**:  Valid connection string OR URL if pointing to a HTTP server.
 * **Parameters**:  Not used at this time.
-* **IsActive**:  Set this value to false to prevent using this `EndPointConfiguration`.
+* **IsActive**:  Set this value to false to prevent AdaptiveClient fro using this `EndPointConfiguration`.
 
 &nbsp;
-
-    EndPointValidator
-
-An `EndPointValidator` is class that is used to determine if an EndPoint is available.  You may use whatever method you wish to determine EndPoint availability.  The default HTTP EndPointValidator works by sending a request to the server
-     
-    ClientFactory
-
-`ClientFactory` iterates over a collection of EndPoints starting with the most preferred and uses an instance of an `EndPointValidator` to determine if a EndPoint is available.    Upon finding an available EndPoint `ClientFactory` will return a suitable client that implements the desired interface.
-
-
-    ClientEvaluator
-
-
-`ClientEvaluator`  works much the same way as `ClientFactory` except `ClientEvaluator` works by executing the requested method instead of using an `EndPointValidator` to locate a working server.  If the call is successful the requested result is returned (as opposed to `ClientFactory` which returns an instance of the client).
+    
 
     RegistrationHelper
 
-RegistrationHelper is one of two Autofac-specific classes.  `RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and clients with the DI container.  Usage is discussed in the Getting Started section.  
+`RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and clients with the DI container.  Usage is discussed in the Getting Started section.  
+
+
+    ServiceManifestFactory
+
+AdaptiveClient supports the concept of a Service Manifest which is basically a collection of services that can be injected into your ViewModel, Controller, etc.  A Service Manifest is defined as follows:
+
+* Create an Interface:
+````csharp
+public interface ISFServiceManifest : IDisposable
+{
+    // Services defined by StoreFront API:
+    IOrdersService OrdersService { get; }
+    IProductsService ProductsService { get; }
+    // more services here...
+}
+````
+* Create an implementation that derives from ServiceMaifestFactory and implements your interface:
+````csharp
+public class SFServiceManifest : ServiceManifestFactory, ISFServiceManifest
+{
+    // Services defined by StoreFront API:
+    public IOrdersService OrdersService { get => Create<IOrdersService>(); }
+    public IProductsService ProductsService { get => Create<IProductsService>(); }
+    // more services here...
+}
+```` 
+* Inject `IAdaptiveClient<ISFServiceManifest>` into your class:
+
+````csharp
+public class OrdersModel : BasePageModel
+{
+    private IAdaptiveClient<ISFServiceManifest> serviceClient;
+
+    public OrdersModel(IAdaptiveClient<ISFServiceManifest> serviceClient)
+    {
+        this.serviceClient = serviceClient;
+    }
+
+    private async Task GetOrders()
+    {
+        // All services defined on ISFServiceManifest are available here:
+        Orders = await serviceClient.CallAsync(async x => await x.OrdersService.GetOrders());
+        Products = await serviceClient.CallAsync(async x => await x.ProductsService.GetProducts());
+        // etc...
+    }
+}
+````
 
     AdaptiveClient
 
-`AdaptiveClient`  is the second of the two Autofac-specific classes.  `AdaptiveClient` is little more than a wrapper around `ClientFactory` and `ClientEvaluator` that insures that objects created within one of the `Call()` or `Try()` methods are created and disposed within an Autofac LifetimeScope.  If you choose to use the `AdaptiveClient` pattern with a DI container other than Autofac you can use `ClientFactory` as required instead of `AdaptiveClient` and implement scope logic as required by your DI container. 
+AdaptiveClient implements two methods you can use to call your services:  Try and Call.  These methods differ in how and when they identify a server as being available.
 
+* **Call and CallAsync**
+````csharp
+var orders = await serviceClient.CallAsync(async x => await x.OrdersService.GetOrders());
+````
+The Call and CallAsync methods attempt to discover an available server the first time (only) the methods are called for each API_Name that is registered with AdaptiveClient.  To determine if a server is available AdaptiveClient resolves an implemenation of `IEndPointValidator` and calls `IsInterfaceAlive` (You can use the implementations of IEndPointValidator found in the [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) nuget package or create your own).  After an available server is identified AdaptiveClient makes no other attempt to identify available servers. If you use the Call or CallAsync method and the call to the server fails your application will fail.  The Call and CallAsync methods do not provide fallback capabilities.
+
+
+* **Try and TryAsync**
+````csharp
+var orders = await serviceClient.TryAsync(async x => await x.OrdersService.GetOrders());
+````
+Like their names imply, Try and TryAsync execute your method inside a try block.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If AdaptiveClient runs out of connection strings it will throw an exception.
 
 ## How `AdaptiveClient` resolves a client from start to finish: 
 
-![alt an image](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/HowAdaptiveClientWorks.png)
+![How AdaptiveClient resolves a service from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
 
 
 
 ## Getting started
 
+1.  Install Nuget packages:
+    * [Autofac](https://www.nuget.org/packages/Autofac/)
+    * [AdaptiveClient](https://www.nuget.org/packages/AdaptiveClient/)
+    * [AdaptiveClient.EntityFrameworkCore](https://www.nuget.org/packages/AdaptiveClient.EntityFrameworkCore/) (optional)
+    * [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) (optional)
+2. Define keys - Define API_Name, EndPointType, and ProviderName as described above.  These keys should be defined in the Domain layer of your app.
+3. Define Endpoints - Create a file called something like EndPoints.json to define your EndPointConfigurations.  See one of the demo projects for an example.
+4. Register required components -  You will need to register your EndPoints, your services, and possibly one or more `IEndPointValidator` implementations.  If you use Entity Framework you will also need to register `DbContext` and `DbContextOptions`.  See the section below and the example application.
+5. Register optional components - Registering a `ServiceManifest` is optional but recommended even if you have a small number of services. If you use EF migrations you should register one or more `MigrationContexts`.  Use a `MigrationContext` to easily drop and re-create your database and apply migrations as necessary.  You may also want to register a `DatabaseInitalizer` if you seed your database when it is created or when a migration is applied.
 
-
-1. Define your `EndPointConfiguration` objects.  See appsettings.development.json in WebAPIServer project of the Demo application.
-
-
-2. Register your `EndPointConfiguration` objects. Use RegistrationHelper as shown in the section below.
-
-3. Register your domain services and clients as shown in the section below.  See also the AdaptiveClientModule file in the Application.Services project of the Demo application.  
-
-4. Accept `IAdaptiveClient<T>` or `IClientFactory<T>` in your constructor wherever you need a client.  `IAdaptiveClient` calls `IClientFactory` internally and it disposes the objects it creates within the Call method.
 
 #### Using `RegistrationHelper`
-Follow the two steps below to register your `EndPointConfiguration` objects and clients.
+The [Zamagon demo](https://github.com/leaderanalytics/AdaptiveClient.EntityFramework.Zamagon) is written to run against both MySQL and MSSQL databases.  The code below is taken from that project and shows how services and Entity Framework objects are registered.
+
+AdaptiveClient supports the concept of Modules that are similar to the object of the same name in Autofac.
+The code below is taken from the Startup class of a dotnet core web application:
+````csharp
+// This method gets called by the runtime. Use this method to add services to the container.
+public IServiceProvider ConfigureServices(IServiceCollection services)
+{
+    services.AddMvc();
+    // Other services registered here...
+
+    // Autofac & AdaptiveClient
+    IEnumerable<IEndPointConfiguration> endPoints = EndPointUtilities.LoadEndPoints("EndPoints.json");
+    ContainerBuilder builder = new ContainerBuilder();
+    builder.Populate(services);
+    builder.RegisterModule(new LeaderAnalytics.AdaptiveClient.EntityFrameworkCore.AutofacModule());
+    RegistrationHelper registrationHelper = new RegistrationHelper(builder);
+
+    registrationHelper
+        .RegisterEndPoints(endPoints)  // endPoints must be registered first
+        .RegisterModule(new Zamagon.Services.Common.AdaptiveClientModule())
+        .RegisterModule(new Zamagon.Services.BackOffice.AdaptiveClientModule())
+        .RegisterModule(new Zamagon.Services.StoreFront.AdaptiveClientModule());
+
+            
+    var container = builder.Build();
+    IDatabaseUtilities databaseUtilities = container.Resolve<IDatabaseUtilities>();
+            
+    // Create all databases or apply migrations
+    foreach (IEndPointConfiguration ep in endPoints.Where(x => x.EndPointType == EndPointType.DBMS))
+        databaseUtilities.CreateOrUpdateDatabase(ep).Wait();
+
+    return container.Resolve<IServiceProvider>();
+}
+````
+The following is an example of how services might registered for an app that reads MSSQL, MySQL, or calls a WebAPI server.  This code is also take from the [Zamagon demo](https://github.com/leaderanalytics/AdaptiveClient.EntityFramework.Zamagon).  
+
+````csharp
+public class AdaptiveClientModule : IAdaptiveClientModule
+{
+    public void Register(RegistrationHelper registrationHelper)
+    {
+        // --- StoreFront Services ---
+
+        registrationHelper
+
+        // MSSQL
+        .RegisterService<StoreFront.MSSQL.OrdersService, IOrdersService>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MSSQL)
+        .RegisterService<StoreFront.MSSQL.ProductsService, IProductsService>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MSSQL)
+            
+        // MySQL
+        .RegisterService<StoreFront.MySQL.OrdersService, IOrdersService>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MySQL)
+        .RegisterService<StoreFront.MySQL.ProductsService, IProductsService>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MySQL)
+
+        // WebAPI
+        .RegisterService<StoreFront.WebAPI.OrdersService, IOrdersService>(EndPointType.HTTP, API_Name.StoreFront, DataBaseProviderName.WebAPI)
+        .RegisterService<StoreFront.WebAPI.ProductsService, IProductsService>(EndPointType.HTTP, API_Name.StoreFront, DataBaseProviderName.WebAPI)
+
+        // DbContexts
+        .RegisterDbContext<Database.Db>(API_Name.StoreFront)
+
+        // Migration Contexts
+        .RegisterMigrationContext<Database.Db_MSSQL>(API_Name.StoreFront, DataBaseProviderName.MSSQL)
+        .RegisterMigrationContext<Database.Db_MySQL>(API_Name.StoreFront, DataBaseProviderName.MySQL)
+
+        // Database Initializers
+        .RegisterDatabaseInitializer<SFDatabaseInitializer>(API_Name.StoreFront, DataBaseProviderName.MSSQL)
+        .RegisterDatabaseInitializer<SFDatabaseInitializer>(API_Name.StoreFront, DataBaseProviderName.MySQL) 
+
+        // Service Manifests
+        .RegisterServiceManifest<SFServiceManifest, ISFServiceManifest>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MSSQL)
+        .RegisterServiceManifest<SFServiceManifest, ISFServiceManifest>(EndPointType.DBMS, API_Name.StoreFront, DataBaseProviderName.MySQL)
+        .RegisterServiceManifest<SFServiceManifest, ISFServiceManifest>(EndPointType.HTTP, API_Name.StoreFront, DataBaseProviderName.WebAPI);
+    }
+}
+````
 
  
-1. Register the entire collection of `EndPointConfiguration` objects for an API or Application:
-
-  ```C#
- RegistrationHelper registrationHelper = new RegistrationHelper(builder);
- IEnumerable<IEndPointConfiguration> endPoints = ... // read endpoints from config file 
- registrationHelper.RegisterEndPoints(endPoints);
- ```
-  
- * `EndPointConfiguration` objects must be registered **before** clients are registered.
- * `RegistrationHelper` only registers clients and `EndPointConfiguration` objects.  You must register other objects in your application as you normally do using your DI container.
-  
-2. Register each combination of client and `EndPointType` that is implemented by your application.  Three examples are shown below but only EndPointTypes you actually use are required.      
-
- ```C#
- string apiName = "OurCompanyAPI";
- // client that communicates directly with the database (the service itself)
- registrationHelper.Register<MyApp.Services.UsersService, IUsersService>(EndPointType.InProcess, apiName);
- // WebAPI client 
- registrationHelper.Register<MyApp.WebAPIClient.UsersClient, IUsersService>(EndPointType.HTTP, apiName);
- // WCF client 
- registrationHelper.Register<MyApp.WCFClient.UsersClient, IUsersService>(EndPointType.WCF, apiName);
- ```
- &nbsp;
 
 ## Tips & FAQs
 
