@@ -28,6 +28,8 @@ public partial class MainWindow : Window
 
 &nbsp;
 
+#### [Get the Zamagon demo](https://github.com/leaderanalytics/AdaptiveClient.EntityFramework.Zamagon)
+
 ---
 #### [Get the simple console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
 
@@ -44,7 +46,9 @@ public partial class MainWindow : Window
 ## What AdaptiveClient does
 Using the traditional repository pattern you pass a connection string down to your data access layer when you need to make a database call.  If the call fails or if the server is not available the application usually fails or is blocked.  
 
-AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given it's transport protocol and data provider.  The process of resolving components is handled by the dependency injection container (Autofac).  The pattern and a few utility and helper classes are provided by AdaptiveClient.
+AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given its transport protocol and data provider.
+
+AdaptiveClient adds almost no additional infrastructure to the application.  The process of resolving components is handled by the dependency injection container (Autofac).  Registering components for a specific server, protocol, or data provider is handled by AdaptiveClient and is implemented using a pattern that requires only three simple keys.
 
 
 ## Who will benefit from using it
@@ -53,20 +57,99 @@ AdaptiveClient works backwards relative to the traditional pattern.  Before maki
 
 
 ## How it works
-`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URL's) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the call.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
+`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URL's) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the request.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
 
-The functionality provided by `AdaptiveClient` comes primarily from the classes shown below and their supporting classes:
+### Its all about Connection Strings
 
+The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you create a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values. Doing so allows AdaptiveClient to match a service implementation to a connection string:
+
+````json
+{
+    "EndPointConfigurations": [
+    {
+        "Name": "StoreFront_SQLServer",
+        "IsActive": "true",
+        "API_Name": "StoreFront",
+        "Preference": "10",
+        "EndPointType": "InProcess",
+        "ProviderName": "MSSQL",
+        "ConnectionString": "Data Source=.\\SQLSERVER;Initial Catalog=AdaptiveClientEF_StoreFront;"
+    },
+
+    {
+        "Name": "BackOffice_SQLServer",
+        "IsActive": "true",
+        "API_Name": "BackOffice",
+        "Preference": "10",
+        "EndPointType": "InProcess",
+        "ProviderName": "MSSQL",
+        "ConnectionString": "Data Source=.\\SQLSERVER;Initial Catalog=AdaptiveClientEF_BackOffice;"
+    },
+
+    {
+        "Name": "StoreFront_MySQL",
+        "IsActive": "true",
+        "API_Name": "StoreFront",
+        "Preference": "20",
+        "EndPointType": "InProcess",
+        "ProviderName": "MySQL",
+        "ConnectionString": "Server=localhost;Database=AdaptiveClientEF_StoreFront;Uid=x;Pwd=x;SslMode=none;"
+    },
+
+    {
+        "Name": "BackOffice_MySQL",
+        "IsActive": "true",
+        "API_Name": "BackOffice",
+        "Preference": "20",
+        "EndPointType": "InProcess",
+        "ProviderName": "MySQL",
+        "ConnectionString": "Server=localhost;Database=AdaptiveClientEF_BackOffice;Uid=x;Pwd=x;SslMode=none"
+    },
+
+    {
+      "Name": "StoreFront_WebAPI",
+      "IsActive": "true",
+      "API_Name": "StoreFront",
+      "Preference": "30",
+      "EndPointType": "HTTP",
+      "ProviderName": "WebAPI",
+      "ConnectionString": "http://localhost:59260/api/StoreFront/"
+    }
+  ]
+}
+````
+AdaptiveClient includes a utility for reading your EndPoints file.  By default only EndPoints where `IsActive` is true are loaded. Parsing EndPoints.json returns a collection of EndPointConfiguration objects.
+
+
+
+## How AdaptiveClient resolves a service from start to finish: 
+
+![How AdaptiveClient resolves a service from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
+
+
+## AdaptiveClient components
 
     EndPointConfiguration
 
-An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection string or a URL but it includes some extra properties that are useful:
+````csharp
+public class EndPointConfiguration : IEndPointConfiguration
+{
+    public string Name { get; set; }
+    public string API_Name { get; set; }
+    public int Preference { get; set; }
+    public String EndPointType { get; set; }
+    public string ConnectionString { get; set; }
+    public string ProviderName { get; set; }
+    public Dictionary<string, string> Parameters { get; set; }
+    public bool IsActive { get; set; }
+}
+````
 
 * **Name**: Name of the EndPoint: DevServer01, QASloth02, etc.
 * **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
 * **Preference**:  Number that allows ClientFactory to rank this EndPoint.  Lower numbers are ranked higher (more preferred).
-* **EndPointType**:  May be one of the following:  InProcess, HTTP, WCF, ESB.  Assists ClientFactory in determining if the EndPoint is alive.  Multiple EndPointConfigurations of the same `EndPointType` may be defined for an API_Name.
-* **ProviderName**: A string that further describes the connection string data provider. Examples are "MSSQL" or "MySQL". Also used as a key to resolve services that are specific to the indicated ProviderName.
+* **EndPointType**:  User defined string that describes what kind of transport is used to access the EndPoint - Examples might be DBMS, HTTP, TCP.
+* **ProviderName**: A string that further describes the connection string data provider or protocol. Examples might be MSSQL, MySQL, WCF, REST. 
 * **ConnectionString**:  Valid connection string OR URL if pointing to a HTTP server.
 * **Parameters**:  Not used at this time.
 * **IsActive**:  Set this value to false to prevent AdaptiveClient fro using this `EndPointConfiguration`.
@@ -76,8 +159,16 @@ An `EndPointConfiguration` (a.k.a EndPoint for short) is like a connection strin
 
     RegistrationHelper
 
-`RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and clients with the DI container.  Usage is discussed in the Getting Started section.  
+`RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and services with the DI container.  The following is an example of registering three implementations of `IOrdersService`. The first implementation contains code specific to Microsoft SQL Server.  The second is specific to MySQL.  The third makes API calls over HTTP.  Note how values supplied as parameters to the `RegisterService` method match values provided in the EndPoints.json file shown above.
 
+````csharp
+registrationHelper.RegisterService<MSSQL_OrdersService, IOrdersService>(EndPointType.DBMS, API_Name.StoreFront, ProviderName.MSSQL);
+registrationHelper.RegisterService<MySQL_OrdersService, IOrdersService>(EndPointType.DBMS, API_Name.StoreFront, ProviderName.MySQL);
+registrationHelper.RegisterService<WebAPI_OrdersService, IOrdersService>(EndPointType.HTTP, API_Name.StoreFront, ProviderName.WebAPI);
+````
+Additional usage is discussed in the Getting Started section.  
+
+---
 
     ServiceManifestFactory
 
@@ -125,6 +216,7 @@ public class OrdersModel : BasePageModel
 }
 ````
 
+---
     AdaptiveClient
 
 AdaptiveClient implements two methods you can use to call your services:  Try and Call.  These methods differ in how and when they identify a server as being available.
@@ -142,10 +234,7 @@ var orders = await serviceClient.TryAsync(async x => await x.OrdersService.GetOr
 ````
 Like their names imply, Try and TryAsync execute your method inside a try block.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If AdaptiveClient runs out of connection strings it will throw an exception.
 
-## How `AdaptiveClient` resolves a client from start to finish: 
-
-![How AdaptiveClient resolves a service from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
-
+---
 
 
 ## Getting started
