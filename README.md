@@ -51,9 +51,11 @@ AdaptiveClient works backwards relative to the traditional pattern.  Before maki
 AdaptiveClient adds almost no additional infrastructure to the application.  The process of resolving components is handled by the dependency injection container (Autofac).  Registering components for a specific server, protocol, or data provider is handled by AdaptiveClient and is implemented using a pattern that requires only three simple keys.
 
 
-## Who will benefit from using it
-* `AdaptiveClient` is ideally targeted to organizations that need to give local users access to their APIs over a local area network but who also wish to expose their APIs to remote users.
-* Developers who want to implement retry and/or fall back logic when making service calls.
+## How you will benefit from using it
+* Create services that are granular and interdependent without going through registration hell with Autofac.
+* Easily give local users in-process access to APIs over a local area network and remote users access via HTTP calls.
+* Implement retry and/or fall back logic when making service calls.
+* Target multiple database platforms for your app: MS SQL Server, MySQL, Oracle, etc.
 
 
 ## How it works
@@ -146,8 +148,8 @@ public class EndPointConfiguration : IEndPointConfiguration
 ````
 
 * **Name**: Name of the EndPoint: DevServer01, QASloth02, etc.
-* **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  NOT the name of a contract or interface.
-* **Preference**:  Number that allows ClientFactory to rank this EndPoint.  Lower numbers are ranked higher (more preferred).
+* **API_Name**:  Name of the application or API exposed by the EndPoint: OurCompanyApp, xyz.com, etc.  
+* **Preference**:  Number that allows AdaptiveClient to rank this EndPoint.  Lower numbers are more preferred.
 * **EndPointType**:  User defined string that describes what kind of transport is used to access the EndPoint - Examples might be DBMS, HTTP, TCP.
 * **ProviderName**: A string that further describes the connection string data provider or protocol. Examples might be MSSQL, MySQL, WCF, REST. 
 * **ConnectionString**:  Valid connection string OR URL if pointing to a HTTP server.
@@ -232,7 +234,7 @@ The Call and CallAsync methods attempt to discover an available server the first
 ````csharp
 var orders = await serviceClient.TryAsync(async x => await x.OrdersService.GetOrders());
 ````
-Like their names imply, Try and TryAsync execute your method inside a try block.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If AdaptiveClient runs out of connection strings it will throw an exception.
+Like their names imply, Try and TryAsync execute your method inside a try block.  AdaptiveClient does not use a validator to test if a server is alive when Try is called - it simply calls your method.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If a call to a server fails the server is marked as "Offline" and no additional calls are made to it during the lifetime of the application.  If AdaptiveClient runs out of connection strings it will throw an exception.
 
 ---
 
