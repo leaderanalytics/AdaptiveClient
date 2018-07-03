@@ -10,11 +10,11 @@ namespace LeaderAnalytics.AdaptiveClient
 {
     public class ResolutionHelper
     {
-        public readonly IComponentContext cxt;
+        public readonly ILifetimeScope scope;
 
-        public ResolutionHelper(IComponentContext cxt)
+        public ResolutionHelper(ILifetimeScope scope)
         {
-            this.cxt = cxt;
+            this.scope = scope;
         }
     }
 }

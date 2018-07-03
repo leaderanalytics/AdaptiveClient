@@ -63,7 +63,7 @@ namespace LeaderAnalytics.AdaptiveClient
             RegisterPerimeter(helper, typeof(TInterface), apiName);
 
             helper.Builder.Register<Func<string, string, TInterface>>(c => {
-                IComponentContext cxt = c.Resolve<IComponentContext>();
+                ILifetimeScope cxt = c.Resolve<ILifetimeScope>();
                 return (ept, pn) => new ResolutionHelper(cxt).ResolveClient<TInterface>(ept, pn);
             });
             helper.Builder.RegisterType<TService>().Keyed<TInterface>(endPointType + providerName);
