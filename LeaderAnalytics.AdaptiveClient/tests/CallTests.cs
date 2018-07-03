@@ -148,7 +148,6 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         }
 
         
-
         [Test]
         public void Client_exception_is_propagated()
         {

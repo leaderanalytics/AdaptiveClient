@@ -1,6 +1,6 @@
 # AdaptiveClient
 
-#### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Transparently access services and APIs regardless of transport or provider.
+#### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Provision services across multiple providers and transports with almost zero application infrastructure.
 
 
 ```c#
@@ -48,7 +48,9 @@ Using the traditional repository pattern you pass a connection string down to yo
 
 AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given its transport protocol and data provider.
 
-AdaptiveClient adds almost no additional infrastructure to the application.  The process of resolving components is handled by the dependency injection container (Autofac).  Registering components for a specific server, protocol, or data provider is handled by AdaptiveClient and is implemented using a pattern that requires only three simple keys.
+AdaptiveClient adds almost no additional infrastructure to your application - and it does not require you to create any either.  The process of resolving components is handled by the dependency injection container (Autofac).  Registering components for a specific server, protocol, or data provider is handled by AdaptiveClient and is implemented using a pattern that requires only three simple keys.  
+
+A typical scenario where AdaptiveClient might be used is an application that needs to target multiple database providers (for example, MSSQL and MySQL).  To accomplish this you need only create provider-specific implementations of your services and register them using a key that you define.  AdaptiveClient will detect what provider is being used via a property associated with each connection string.  Choosing the correct dependencies for a given provider becomes a matter for Autofac to handle - which means you do not have to create that infrastructure again yourself.
 
 
 ## How you will benefit from using it
@@ -59,11 +61,11 @@ AdaptiveClient adds almost no additional infrastructure to the application.  The
 
 
 ## How it works
-`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URL's) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the request.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
+`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URLs) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the request.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
 
 ### Its all about Connection Strings
 
-The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you create a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values. Doing so allows AdaptiveClient to match a service implementation to a connection string:
+The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you move your connection strings and API URLs to a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name, EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values. Doing so allows AdaptiveClient to match a service implementation to a connection string:
 
 ````json
 {
