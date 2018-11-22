@@ -36,13 +36,23 @@ namespace LeaderAnalytics.AdaptiveClient
 
             foreach (T client in ClientEnumerator())
             {
-                IEndPointValidator validator = validatorFactory(CachedEndPoint.EndPointType, CachedEndPoint.ProviderName);
+                bool? validationResult = endPointCache.GetValidationResult(CachedEndPoint.Name);
 
-                if (!validator.IsInterfaceAlive(CachedEndPoint))
+                if (validationResult.HasValue)  // .HasValue when validated previously
                 {
-                    if (logger != null)
-                        logger($"Failed to connect to EndPoint named {CachedEndPoint.Name} when resolving a client of type {typeof(T)}.");
+                    if (validationResult.Value)
+                        return client;   
+                    else
+                        continue;       
+                } 
 
+                IEndPointValidator validator = validatorFactory(CachedEndPoint.EndPointType, CachedEndPoint.ProviderName);
+                bool isAlive = validator.IsInterfaceAlive(CachedEndPoint);
+                endPointCache.SetValidationResult(CachedEndPoint.Name, isAlive);
+
+                if (! isAlive)
+                {
+                    logger?.Invoke($"Failed to connect to EndPoint named {CachedEndPoint.Name} when resolving a client of type {typeof(T)}.");
                     continue;
                 }
                 return client;

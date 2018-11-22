@@ -109,8 +109,17 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             builder.RegisterInstance(InProcess_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.InProcess + ProviderName.MySQL);
             builder.RegisterInstance(HTTP_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.HTTP + ProviderName.HTTP);
             IContainer container = builder.Build();
+            Exception ex = null;
 
-            Assert.Throws<DependencyResolutionException>(() => container.Resolve<IAdaptiveClient<IDummy3>>());
+            try
+            {
+                container.Resolve<IAdaptiveClient<IDummy3>>();
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+            Assert.IsTrue(ex is DependencyResolutionException);
         }
 
         
@@ -168,7 +177,15 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             IContainer container = builder.Build();
 
             IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
-            Exception ex = Assert.Throws<Exception>(() => client1.Call(x => x.GetString()));
+            Exception ex = null;
+            try
+            {
+                 client1.Call(x => x.GetString());
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
 
             Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
             Assert.AreEqual("InProcess Exception", ex.Message);
@@ -231,5 +248,57 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             }
             
         }
+
+        [Test]
+        public void EndPoint_is_validated_once_only_when_override_endpoint_is_passed()
+        {
+            int inProcessCalls = 0;
+            int webAPICalls = 0;
+
+            Moq.Mock<IEndPointValidator> InProcess_Validator_Mock = new Mock<IEndPointValidator>();
+            InProcess_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Callback(() => inProcessCalls++).Returns(true);
+            Moq.Mock<IEndPointValidator> HTTP_Validator_Mock = new Mock<IEndPointValidator>();
+            HTTP_Validator_Mock.Setup(x => x.IsInterfaceAlive(Moq.It.IsAny<IEndPointConfiguration>())).Callback(() => webAPICalls++).Returns(true);
+            builder.RegisterInstance(InProcess_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.InProcess + ProviderName.MSSQL);
+            builder.RegisterInstance(InProcess_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.InProcess + ProviderName.MySQL);
+            builder.RegisterInstance(HTTP_Validator_Mock.Object).Keyed<IEndPointValidator>(EndPointType.HTTP + ProviderName.HTTP);
+            IContainer container = builder.Build();
+
+
+            IAdaptiveClient<IDummyAPI1> client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            string result = client1.Call(x => x.GetString(), "Application_SQL1");
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
+            Assert.AreEqual(0, webAPICalls);
+
+            // do it again and use the webpai endpoint:
+
+            client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            result = client1.Call(x => x.GetString(), "Application_WebAPI1");
+            Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);         // validate only once
+            Assert.AreEqual(1, webAPICalls);
+
+            // do it again and use the inprocess endpoint:
+
+            result = client1.Call(x => x.GetString(), "Application_SQL1");
+            Assert.AreEqual("Application_SQL1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("InProcessClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
+            Assert.AreEqual(1, webAPICalls);
+
+            // do it again and use the webpai endpoint:
+
+            client1 = container.Resolve<IAdaptiveClient<IDummyAPI1>>();
+            result = client1.Call(x => x.GetString(), "Application_WebAPI1");
+            Assert.AreEqual("Application_WebAPI1", client1.CurrentEndPoint.Name);
+            Assert.AreEqual("WebAPIClient1", result);
+            Assert.AreEqual(1, inProcessCalls);
+            Assert.AreEqual(1, webAPICalls);
+
+        }
+
     }
 }

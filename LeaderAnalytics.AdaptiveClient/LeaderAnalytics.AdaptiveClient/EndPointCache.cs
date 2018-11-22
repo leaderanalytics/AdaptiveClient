@@ -15,10 +15,12 @@ namespace LeaderAnalytics.AdaptiveClient
     public class EndPointCache
     {
         private ConcurrentDictionary<string, IEndPointConfiguration> EndPoints;
+        private ConcurrentDictionary<string, bool> ValidatedEndPoints;
 
         public EndPointCache()
         {
             EndPoints = new ConcurrentDictionary<string, IEndPointConfiguration>();
+            ValidatedEndPoints = new ConcurrentDictionary<string, bool>();
         }
 
         public IEndPointConfiguration GetEndPoint(string apiName)
@@ -38,5 +40,21 @@ namespace LeaderAnalytics.AdaptiveClient
             else
                 EndPoints[apiName] = endPoint;
         }
+
+        public void SetValidationResult(string endPointName, bool result)
+        {
+            ValidatedEndPoints[endPointName] = result;
+        }
+
+        public bool? GetValidationResult(string endPointName)
+        {
+            bool isValidated = ValidatedEndPoints.TryGetValue(endPointName, out bool result);
+
+            if (!isValidated)
+                return null;
+
+            return new Nullable<bool>(result);
+        }
+
     }
 }
