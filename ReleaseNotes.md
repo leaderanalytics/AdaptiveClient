@@ -1,5 +1,8 @@
 # AdaptiveClient Release Notes
 
+## Version 0.31.3 (2018-11-21)
+Save validation result so CachedEndpoint is validated once only.
+
 ## Version 0.30.00 (2018-05-12)
 ### Breaking changes
 
