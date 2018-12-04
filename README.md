@@ -34,10 +34,6 @@ public partial class MainWindow : Window
 #### [Get the simple console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
 
 ---
-#### [Get the advanced end-to-end demo](https://github.com/leaderanalytics/AdaptiveClient.AdvancedDemo)
-
----
-
 #### [Get the nuget package](https://www.nuget.org/packages/AdaptiveClient/)
 
 ---
@@ -347,12 +343,21 @@ public class AdaptiveClientModule : IAdaptiveClientModule
 ```C#
 User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
 ```
+  
+
+## Related libraries
+
+#### [AdaptiveClient.Utilities](https://github.com/leaderanalytics/AdaptiveClient.Utilities)
 
 ---
-#### [Get the simple console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
+#### [AdaptiveClient.EntityFrameworkCore](https://github.com/leaderanalytics/AdaptiveClient.EntityFramework)
 
 ---
-#### [Get the advanced end-to-end demo](https://github.com/leaderanalytics/AdaptiveClient.AdvancedDemo)
+## Demo Applications
+---
+#### [Console app demo](https://github.com/leaderanalytics/AdaptiveClient.SimpleConsoleDemo)
 
+---
+#### [Zamagon demo](https://github.com/leaderanalytics/AdaptiveClient.EntityFramework.Zamagon)
 ---
 
