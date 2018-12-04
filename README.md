@@ -345,7 +345,7 @@ User user = await client.CallAsync(x => x.GetUser(userID), "MyEndPointName");
 ```
   
 
-## Related libraries
+## Related Libraries
 
 #### [AdaptiveClient.Utilities](https://github.com/leaderanalytics/AdaptiveClient.Utilities)
 
