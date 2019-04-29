@@ -10,7 +10,7 @@ namespace LeaderAnalytics.AdaptiveClient.Autofac
     // Todo:  Some redundant code here - need to refactor.  Don't want to implement IDisposable we don't want the consumer of this class to have to 
     // deal with disposing of it. 
 
-    public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class, IDisposable
+    public class AdaptiveClient<T> : IAdaptiveClient<T> where T : class
     {
         private EndPointCache endPointContext;
         public IEndPointConfiguration CurrentEndPoint

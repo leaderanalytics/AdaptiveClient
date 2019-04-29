@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
-    public interface IAdaptiveClient<T> where T : class, IDisposable
+    public interface IAdaptiveClient<T> where T : class
     {
         /// <summary>
         /// Returns the last resolved EndPoint, if any.

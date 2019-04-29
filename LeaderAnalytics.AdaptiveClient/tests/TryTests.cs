@@ -227,7 +227,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
 
         
         [Test]
-        public async Task Inner_exceptions_are_maintained_for_each_client_call_async()
+        public void Inner_exceptions_are_maintained_for_each_client_call_async()
         {
             // We catch and log the error if a client throws - however we don't propagate errors unless
             // we run out of endpoints to try.  This test asserts that errors from each client are maintained 
@@ -255,6 +255,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
             Assert.AreEqual("InProcess Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[1].InnerException.Message);
             Assert.AreEqual("WebAPI Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[2].InnerException.Message);
             Assert.AreEqual("WebAPI Exception", ((AggregateException)(ex.InnerException)).InnerExceptions[3].InnerException.Message);
+            
         }
     }
 }
