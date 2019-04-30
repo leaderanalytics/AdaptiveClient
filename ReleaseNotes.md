@@ -1,4 +1,6 @@
 # AdaptiveClient Release Notes
+## Version 0.32.0 (2019-04-30)
+Services no longer need to implement `IDisposable`.
 
 ## Version 0.31.3 (2018-11-21)
 Save validation result so CachedEndpoint is validated once only.
