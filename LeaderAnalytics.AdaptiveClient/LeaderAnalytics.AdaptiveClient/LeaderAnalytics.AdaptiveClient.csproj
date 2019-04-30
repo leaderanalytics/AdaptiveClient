@@ -17,6 +17,7 @@
     <AssemblyVersion>0.32.0.0</AssemblyVersion>
     <FileVersion>0.32.0.0</FileVersion>
     <PackageId>AdaptiveClient</PackageId>
+    <PackageLicenseUrl>https://github.com/leaderanalytics/AdaptiveClient/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
