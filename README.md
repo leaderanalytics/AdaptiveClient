@@ -209,8 +209,8 @@ public class OrdersModel : BasePageModel
     private async Task GetOrders()
     {
         // All services defined on ISFServiceManifest are available here:
-        Orders = await serviceClient.CallAsync(async x => await x.OrdersService.GetOrders());
-        Products = await serviceClient.CallAsync(async x => await x.ProductsService.GetProducts());
+        Orders = await serviceClient.CallAsync(x => x.OrdersService.GetOrders());
+        Products = await serviceClient.CallAsync(x => x.ProductsService.GetProducts());
         // etc...
     }
 }
@@ -223,14 +223,14 @@ AdaptiveClient implements two methods you can use to call your services:  Try an
 
 * **Call and CallAsync**
 ````csharp
-var orders = await serviceClient.CallAsync(async x => await x.OrdersService.GetOrders());
+var orders = await serviceClient.CallAsync(x => x.OrdersService.GetOrders());
 ````
 The Call and CallAsync methods attempt to discover an available server the first time (only) the methods are called for each API_Name that is registered with AdaptiveClient.  To determine if a server is available AdaptiveClient resolves an implemenation of `IEndPointValidator` and calls `IsInterfaceAlive` (You can use the implementations of IEndPointValidator found in the [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) nuget package or create your own).  After an available server is identified AdaptiveClient makes no other attempt to identify available servers. If you use the Call or CallAsync method and the call to the server fails your application will fail.  The Call and CallAsync methods do not provide fallback capabilities.
 
 
 * **Try and TryAsync**
 ````csharp
-var orders = await serviceClient.TryAsync(async x => await x.OrdersService.GetOrders());
+var orders = await serviceClient.TryAsync(x => x.OrdersService.GetOrders());
 ````
 Like their names imply, Try and TryAsync execute your method inside a try block.  AdaptiveClient does not use a validator to test if a server is alive when Try is called - it simply calls your method.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If a call to a server fails the server is marked as "Offline" and no additional calls are made to it during the lifetime of the application.  If AdaptiveClient runs out of connection strings it will throw an exception.
 
