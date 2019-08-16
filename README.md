@@ -3,6 +3,9 @@
 #### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Provision services across multiple providers and transports with almost zero application infrastructure.
 
 
+![AdaptiveClient](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient.jpg)
+
+
 ```c#
 public partial class MainWindow : Window
 {
