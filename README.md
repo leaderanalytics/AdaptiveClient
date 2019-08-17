@@ -16,7 +16,7 @@ public partial class MainWindow : Window
         this.client = client;
     }
 
-    public async Task<IActionResult> Login(int userID)
+    public async Task<User> Login(string userName, string password)
     {
         // AdaptiveClient will attempt to use the server you define as most preferred. 
         // Server may be SQL, MySQL, WCF, REST, etc. - AdaptiveClient will resolve the correct 
@@ -24,7 +24,8 @@ public partial class MainWindow : Window
         // If the request fails AdaptiveClient will begin an orderly fall back to any other 
         // server that can handle the request:
 
-        User user = await client.TryAsync(x => x.GetUser(userID));
+        User user = await client.TryAsync(x => x.GetUser(userName, password));
+        return user;
     }
 }
 ```
@@ -43,24 +44,28 @@ public partial class MainWindow : Window
 
 
 ## What AdaptiveClient does
-Using the traditional repository pattern you pass a connection string down to your data access layer when you need to make a database call.  If the call fails or if the server is not available the application usually fails or is blocked.  
 
-AdaptiveClient works backwards relative to the traditional pattern.  Before making a service call the application first asks AdaptiveClient to locate a server that can handle the request.  Upon locating a server, AdaptiveClient resolves the components necessary to communicate with that server given its transport protocol and data provider.
+#### Dynamically route API calls over the fastest transport available
 
-AdaptiveClient adds almost no additional infrastructure to your application - and it does not require you to create any either.  The process of resolving components is handled by the dependency injection container (Autofac).  Registering components for a specific server, protocol, or data provider is handled by AdaptiveClient and is implemented using a pattern that requires only three simple keys.  
+Easily allow internal desktop apps to access APIs using fast, in-process calls over the local area network.  The same applications can make HTTP calls and access the same APIs when off-site.  Adaptive Client resolves the correct implementation of your API client based on the connection available at runtime.
+	
 
-A typical scenario where AdaptiveClient might be used is an application that needs to target multiple database providers (for example, MSSQL and MySQL).  To accomplish this you need only create provider-specific implementations of your services and register them using a key that you define.  AdaptiveClient will detect what provider is being used via a property associated with each connection string.  Choosing the correct dependencies for a given provider becomes a matter for Autofac to handle - which means you do not have to create that infrastructure again yourself.
+#### Target multiple data providers in your service and repository layers
+
+If you maintain a shrink wrap app or you are migrating and you want to target multiple database providers you can make the process simple and transparent to the end user of your application.  Adaptive Client resolves the correct implementation of your service and repository based on properties of the connection string.
+
+#### Fall back to secondary servers if the primary fails
+
+All you need to do is define multiple connection strings for the API you want to use.  Give each connection string a preference and Adaptive Client will attempt to use them in the order you define.  Connection strings can be for any transport or data provider.
 
 
-## How you will benefit from using it
-* Create services that are granular and interdependent without going through registration hell with Autofac.
-* Easily give local users in-process access to APIs over a local area network and remote users access via HTTP calls.
-* Implement retry and/or fall back logic when making service calls.
-* Target multiple database platforms for your app: MS SQL Server, MySQL, Oracle, etc.
 
+## How you will benefit from using Adaptive Client
+
+Adaptive Client allows you to continue write strongly typed n-tier applications using SOLID and DRY principals you have already embraced.  If you are careful to encapsulate your business logic in your service layer you well on your way to writing a truly scalable application.  You don't have to buy into any new architecture, you don't need to write any tooling, there are no black boxes.
 
 ## How it works
-`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URLs) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make a service call AdaptiveClient will locate a server that can handle the request.  Using the keys associated with the connection string (or URL) of the selected server, AdaptiveClient will resolve the specific dependencies required to communicate with that server.
+`AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URLs) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make an API call AdaptiveClient use the keys associated with the connection string (or URL) to resolve the specific dependencies required to communicate with the server.
 
 ### Its all about Connection Strings
 
@@ -125,9 +130,11 @@ AdaptiveClient includes a utility for reading your EndPoints file.  By default o
 
 
 
-## How AdaptiveClient resolves a service from start to finish: 
+## How AdaptiveClient resolves a client from start to finish 
 
-![How AdaptiveClient resolves a service from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
+In most cases you will use a single connection string for each API your application uses (which may be a url).  However, as mentioned above, Adaptive Client will fall back if necessary and attempt to contact multiple servers using different connection strings.  Here is how that process works:
+
+![How AdaptiveClient resolves a client from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
 
 
 ## AdaptiveClient components
@@ -171,71 +178,39 @@ registrationHelper.RegisterService<WebAPI_OrdersService, IOrdersService>(EndPoin
 ````
 Additional usage is discussed in the Getting Started section.  
 
----
 
-    ServiceManifestFactory
-
-AdaptiveClient supports the concept of a Service Manifest which is basically a collection of services that can be injected into your ViewModel, Controller, etc.  A Service Manifest is defined as follows:
-
-* Create an Interface:
-````csharp
-public interface ISFServiceManifest : IDisposable
-{
-    // Services defined by StoreFront API:
-    IOrdersService OrdersService { get; }
-    IProductsService ProductsService { get; }
-    // more services here...
-}
-````
-* Create an implementation that derives from ServiceMaifestFactory and implements your interface:
-````csharp
-public class SFServiceManifest : ServiceManifestFactory, ISFServiceManifest
-{
-    // Services defined by StoreFront API:
-    public IOrdersService OrdersService { get => Create<IOrdersService>(); }
-    public IProductsService ProductsService { get => Create<IProductsService>(); }
-    // more services here...
-}
-```` 
-* Inject `IAdaptiveClient<ISFServiceManifest>` into your class:
-
-````csharp
-public class OrdersModel : BasePageModel
-{
-    private IAdaptiveClient<ISFServiceManifest> serviceClient;
-
-    public OrdersModel(IAdaptiveClient<ISFServiceManifest> serviceClient)
-    {
-        this.serviceClient = serviceClient;
-    }
-
-    private async Task GetOrders()
-    {
-        // All services defined on ISFServiceManifest are available here:
-        Orders = await serviceClient.CallAsync(x => x.OrdersService.GetOrders());
-        Products = await serviceClient.CallAsync(x => x.ProductsService.GetProducts());
-        // etc...
-    }
-}
-````
 
 ---
     AdaptiveClient
 
-AdaptiveClient implements two methods you can use to call your services:  Try and Call.  These methods differ in how and when they identify a server as being available.
+AdaptiveClient implements two methods you can use to call your services:  Try and Call.  These methods differ in how and when they identify a server as being available if they are called without a specific `EndPointConfiguration` name.
 
 * **Call and CallAsync**
 ````csharp
+string endPointName = "Production_Server";
+var orders = await serviceClient.CallAsync(x => x.OrdersService.GetOrders(), endPointName);
+````
+In the example above we are calling a service and passing the name of a specific `EndPointConfiguration` to use.  AdaptiveClient will resolve components based on the properties of that specific `EndPointConfiguration` in order to call the service.
+````csharp
 var orders = await serviceClient.CallAsync(x => x.OrdersService.GetOrders());
 ````
-The Call and CallAsync methods attempt to discover an available server the first time (only) the methods are called for each API_Name that is registered with AdaptiveClient.  To determine if a server is available AdaptiveClient resolves an implemenation of `IEndPointValidator` and calls `IsInterfaceAlive` (You can use the implementations of IEndPointValidator found in the [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) nuget package or create your own).  After an available server is identified AdaptiveClient makes no other attempt to identify available servers. If you use the Call or CallAsync method and the call to the server fails your application will fail.  The Call and CallAsync methods do not provide fallback capabilities.
+In the example above we do not pass the name of an `EndPointConfiguration` to Call or CallAsync.  When invoked using this overload, Call and CallAsync will attempt to discover an available server the first time (only) the methods are called for each API_Name that is registered with AdaptiveClient.  To determine if a server is available AdaptiveClient resolves an implemenation of `IEndPointValidator` and calls `IsInterfaceAlive` (You can use the implementations of IEndPointValidator found in the [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) nuget package or create your own).  After an available server is identified AdaptiveClient makes no other attempt to identify available servers. If you use the Call or CallAsync method and the call to the server fails your application will fail.  The Call and CallAsync methods do not provide fallback capabilities.
 
 
 * **Try and TryAsync**
+
+
 ````csharp
 var orders = await serviceClient.TryAsync(x => x.OrdersService.GetOrders());
 ````
 Like their names imply, Try and TryAsync execute your method inside a try block.  AdaptiveClient does not use a validator to test if a server is alive when Try is called - it simply calls your method.  If the call fails, AddaptiveClient will attempt to fall back to another server that is registered for the API.  Servers are contacted in the order of the Preference property on the EndPointConfiguration class.  If a call to a server fails the server is marked as "Offline" and no additional calls are made to it during the lifetime of the application.  If AdaptiveClient runs out of connection strings it will throw an exception.
+
+````csharp
+string primaryEndPoint = "Production Server";
+string backupEndPoint = "Backup Server";
+var orders = await serviceClient.TryAsync(x => x.OrdersService.GetOrders(), primaryEndPoint, backupEndPoint);
+````
+Try and TryAsync are overloaded to allow one or more `EndPointConfiguration` names to be used.
 
 ---
 

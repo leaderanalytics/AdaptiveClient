@@ -1,4 +1,14 @@
 # AdaptiveClient Release Notes
+## Version 1.0.0 (2019-08-20)
+### Breaking changes
+
+* Moved `ServiceManifestFactory` from AdaptiveClient.EntityFrameworkCore to AdaptiveClient.Utilities.
+
+### Other changes
+
+* Update documentation.
+
+
 ## Version 0.32.0 (2019-04-30)
 Services no longer need to implement `IDisposable`.
 
