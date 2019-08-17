@@ -7,11 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderAnalytics.AdaptiveCli
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderAnalytics.AdaptiveClient.Tests", "tests\LeaderAnalytics.AdaptiveClient.Tests.csproj", "{B04683F9-3717-48F6-A7F1-750C3F1E1C0E}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CBA02C5-7C92-4BE0-B394-BA16CF1FE8DA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EDA24A7-FCED-4B9C-8A9A-46668C4D5BA0}"
 	ProjectSection(SolutionItems) = preProject
-		..\FAQ.md = ..\FAQ.md
-		..\README.md = ..\README.md
-		..\ReleaseNotes.md = ..\ReleaseNotes.md
+		FAQ.md = FAQ.md
+		README.md = README.md
+		ReleaseNotes.md = ReleaseNotes.md
 	EndProjectSection
 EndProject
 Global

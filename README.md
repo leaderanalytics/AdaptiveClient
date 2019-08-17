@@ -3,7 +3,7 @@
 #### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Provision services across multiple providers and transports with almost zero application infrastructure.
 
 
-![AdaptiveClient](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient.jpg)
+![AdaptiveClient](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/docs/AdaptiveClient.jpg)
 
 
 ```c#
@@ -134,7 +134,7 @@ AdaptiveClient includes a utility for reading your EndPoints file.  By default o
 
 In most cases you will use a single connection string for each API your application uses (which may be a url).  However, as mentioned above, Adaptive Client will fall back if necessary and attempt to contact multiple servers using different connection strings.  Here is how that process works:
 
-![How AdaptiveClient resolves a client from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/LeaderAnalytics.AdaptiveClient/docs/AdaptiveClient2.png)
+![How AdaptiveClient resolves a client from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/docs/AdaptiveClient2.png)
 
 
 ## AdaptiveClient components
