@@ -62,7 +62,7 @@ All you need to do is define multiple connection strings for the API you want to
 
 ## How you will benefit from using Adaptive Client
 
-Adaptive Client allows you to continue write strongly typed n-tier applications using SOLID and DRY principals you have already embraced.  If you are careful to encapsulate your business logic in your service layer you well on your way to writing a truly scalable application.  You don't have to buy into any new architecture, you don't need to write any tooling, there are no black boxes.
+Adaptive Client allows you to continue write strongly typed n-tier applications using SOLID and DRY principals you have already embraced.  If you are careful to encapsulate your business logic in your service layer you are well on your way to writing a truly scalable application.  You don't have to buy into any new architecture, you don't need to write any tooling, there are no black boxes.
 
 ## How it works
 `AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URLs) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make an API call AdaptiveClient use the keys associated with the connection string (or URL) to resolve the specific dependencies required to communicate with the server.
@@ -221,7 +221,7 @@ Try and TryAsync are overloaded to allow one or more `EndPointConfiguration` nam
     * [Autofac](https://www.nuget.org/packages/Autofac/)
     * [AdaptiveClient](https://www.nuget.org/packages/AdaptiveClient/)
     * [AdaptiveClient.EntityFrameworkCore](https://www.nuget.org/packages/AdaptiveClient.EntityFrameworkCore/) (optional)
-    * [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) (optional)
+    * [AdaptiveClient.Utilities](https://www.nuget.org/packages/AdaptiveClient.Utilities/) (optional but highly recommended)
 2. Define keys - Define API_Name, EndPointType, and ProviderName as described above.  These keys should be defined in the Domain layer of your app.
 3. Define Endpoints - Create a file called something like EndPoints.json to define your EndPointConfigurations.  See one of the demo projects for an example.
 4. Register required components -  You will need to register your EndPoints, your services, and possibly one or more `IEndPointValidator` implementations.  If you use Entity Framework you will also need to register `DbContext` and `DbContextOptions`.  See the section below and the example application.
