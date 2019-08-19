@@ -47,29 +47,29 @@ public partial class MainWindow : Window
 
 #### Dynamically route API calls over the fastest transport available
 
-Easily allow internal desktop apps to access APIs using fast, in-process calls over the local area network.  The same applications can make HTTP calls and access the same APIs when off-site.  Adaptive Client resolves the correct implementation of your API client based on the connection available at runtime.
+Easily allow internal desktop apps to access APIs using fast, in-process calls over the local area network.  The same applications can make HTTP calls and access the same APIs when off-site.  AdaptiveClient resolves the correct implementation of your API client based on the connection available at runtime.
 	
 
 #### Target multiple data providers in your service and repository layers
 
-If you maintain a shrink wrap app or you are migrating and you want to target multiple database providers you can make the process simple and transparent to the end user of your application.  Adaptive Client resolves the correct implementation of your service and repository based on properties of the connection string.
+If you maintain a shrink wrap app or you are migrating and you want to target multiple database providers you can make the process simple and transparent to the end user of your application.  AdaptiveClient resolves the correct implementation of your service and repository based on properties of the connection string.
 
 #### Fall back to secondary servers if the primary fails
 
-All you need to do is define multiple connection strings for the API you want to use.  Give each connection string a preference and Adaptive Client will attempt to use them in the order you define.  Connection strings can be for any transport or data provider.
+All you need to do is define multiple connection strings for the API you want to use.  Give each connection string a preference and AdaptiveClient will attempt to use them in the order you define.  Connection strings can be for any transport or data provider.
 
 
 
-## How you will benefit from using Adaptive Client
+## How you will benefit from using AdaptiveClient
 
-Adaptive Client allows you to continue to write strongly typed n-tier applications using SOLID and DRY principals you have already embraced.  If you are careful to encapsulate your business logic in your service layer you are well on your way to writing a truly scalable application.  You don't have to buy into any new architecture, you don't need to write any tooling, there are no black boxes.
+AdaptiveClient allows you to continue to write strongly typed n-tier applications using SOLID and DRY principals you have already embraced.  If you are careful to encapsulate your business logic in your service layer you are well on your way to writing a truly scalable application.  You don't have to buy into any new architecture, you don't need to write any tooling, there are no black boxes.
 
 ## How it works
 `AdaptiveClient` is a design pattern that leverages [n-tier architecture](https://en.wikipedia.org/wiki/Multitier_architecture) and a dependency injection container (Autofac).  The classes included in this download assist you in implementing the pattern.  In a nutshell, AdaptiveClient works by associating three keys with each connection string in your application.  These three keys are **API_Name**, **EndPointType**, and **ProviderName**.  You define the values for each of these keys.  You register each of your connection strings (or API URLs) with AdaptiveClient using these keys.  You also use the same keys to register implementations of your services.  When you make an API call AdaptiveClient use the keys associated with the connection string (or URL) to resolve the specific dependencies required to communicate with the server.
 
 ### Its all about Connection Strings
 
-The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you move your connection strings and API URLs to a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name, EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values. Doing so allows AdaptiveClient to match a service implementation to a connection string:
+The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you move your connection strings and API URLs to a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name, EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values as keys. Doing so allows AdaptiveClient to match a service implementation to a connection string:
 
 ````json
 {
@@ -132,7 +132,7 @@ AdaptiveClient includes a utility for reading your EndPoints file.  By default o
 
 ## How AdaptiveClient resolves a client from start to finish 
 
-In most cases you will use a single connection string for each API your application uses (which may be a url).  However, as mentioned above, Adaptive Client will fall back if necessary and attempt to contact multiple servers using different connection strings.  Here is how that process works:
+In most cases you will use a single connection string for each API your application uses (which may be a url).  However, as mentioned above, AdaptiveClient will fall back if necessary and attempt to contact multiple servers using different connection strings.  Here is how that process works:
 
 ![How AdaptiveClient resolves a client from start to finish](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/docs/AdaptiveClient2.png)
 
