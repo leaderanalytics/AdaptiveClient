@@ -7,6 +7,7 @@
 
 ### Other changes
 
+* Target net5.0 and net461.
 * Minor code clean-up.
 * Update dependencies.
 * Update documentation.
