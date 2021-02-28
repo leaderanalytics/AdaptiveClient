@@ -4,7 +4,7 @@
 * #### Build interdependent services that are granular and testable
 * #### Organize services into APIs and work with them as a single unit
 * #### Inject a single client that allows the application to access all services in an API
-* #### Provision services across multiple providers and transports with almost zero application infrastructure.
+* #### Provision services across multiple providers and transports with almost zero application infrastructure
 
 ----
 
