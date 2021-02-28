@@ -16,6 +16,12 @@ namespace LeaderAnalytics.AdaptiveClient
 
         public Perimeter(string api_name, IList<IEndPointConfiguration> endPoints)
         {
+            if (string.IsNullOrEmpty(api_name))
+                throw new ArgumentNullException(nameof(api_name));
+            
+            if (endPoints == null)
+                throw new ArgumentNullException(nameof(endPoints));
+
             this.api_name = api_name;
             _endPoints = endPoints.OrderBy(x => x.Preference).ToList();
         }

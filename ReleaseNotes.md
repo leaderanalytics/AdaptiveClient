@@ -1,4 +1,16 @@
 # AdaptiveClient Release Notes
+
+## Version 2.0.0 (2021-02-27)
+### Breaking changes
+
+* Move Endpoints.json to a section within appsettings.json.  Remove dependency on Newtonsoft.json.
+
+### Other changes
+
+* Minor code clean-up.
+* Update dependencies.
+* Update documentation.
+
 ## Version 1.0.0 (2019-08-20)
 ### Breaking changes
 

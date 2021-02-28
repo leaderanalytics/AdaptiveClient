@@ -12,9 +12,6 @@ namespace LeaderAnalytics.AdaptiveClient
     {
         public readonly ILifetimeScope scope;
 
-        public ResolutionHelper(ILifetimeScope scope)
-        {
-            this.scope = scope;
-        }
+        public ResolutionHelper(ILifetimeScope scope) => this.scope = scope;
     }
 }

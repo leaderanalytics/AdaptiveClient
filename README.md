@@ -1,7 +1,12 @@
 # AdaptiveClient
 
-#### Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Provision services across multiple providers and transports with almost zero application infrastructure.
+* #### Create a scalable, loosely coupled service layer
+* #### Build interdependent services that are granular and testable
+* #### Organize services into APIs and work with them as a single unit
+* #### Inject a single client that allows the application to access all services in an API
+* #### Provision services across multiple providers and transports with almost zero application infrastructure.
 
+----
 
 ![AdaptiveClient](https://raw.githubusercontent.com/leaderanalytics/AdaptiveClient/master/docs/AdaptiveClient.jpg)
 
@@ -69,11 +74,11 @@ AdaptiveClient allows you to continue to write strongly typed n-tier application
 
 ### Its all about Connection Strings
 
-The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you move your connection strings and API URLs to a JSON configuration file similar to the one shown below(EndPoints.json).  The values you see for API_Name, EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values as keys. Doing so allows AdaptiveClient to match a service implementation to a connection string:
+The functionality provided by AdaptiveClient comes primarily from a class called `EndPointConfiguration` which is a class that contains a connection string and a few extra properties.  When you implement AdaptiveClient you move your connection strings and API URLs to a section within your appsettings.json file.  The values you see for API_Name, EndPointType, and ProviderName are also defined as constants in  your application.  You register implementations of your services using these same values as keys. Doing so allows AdaptiveClient to match a service implementation to a connection string:
 
 ````json
 {
-    "EndPointConfigurations": [
+    "EndPoints": [
     {
         "Name": "StoreFront_SQLServer",
         "IsActive": "true",
@@ -126,7 +131,7 @@ The functionality provided by AdaptiveClient comes primarily from a class called
   ]
 }
 ````
-AdaptiveClient includes a utility for reading your EndPoints file.  By default only EndPoints where `IsActive` is true are loaded. Parsing EndPoints.json returns a collection of EndPointConfiguration objects.
+AdaptiveClient includes a utility for loading EndPoints from your appsettings.json file.  By default only EndPoints where `IsActive` is true are loaded. 
 
 
 
@@ -169,7 +174,7 @@ public class EndPointConfiguration : IEndPointConfiguration
 
     RegistrationHelper
 
-`RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and services with the DI container.  The following is an example of registering three implementations of `IOrdersService`. The first implementation contains code specific to Microsoft SQL Server.  The second is specific to MySQL.  The third makes API calls over HTTP.  Note how values supplied as parameters to the `RegisterService` method match values provided in the EndPoints.json file shown above.
+`RegistrationHelper` hides the complexity of registering  `EndPointConfiguration` objects and services with the DI container.  The following is an example of registering three implementations of `IOrdersService`. The first implementation contains code specific to Microsoft SQL Server.  The second is specific to MySQL.  The third makes API calls over HTTP.  Note how values supplied as parameters to the `RegisterService` method match values provided in the appsettings.json file shown above.
 
 ````csharp
 registrationHelper.RegisterService<MSSQL_OrdersService, IOrdersService>(EndPointType.DBMS, API_Name.StoreFront, ProviderName.MSSQL);

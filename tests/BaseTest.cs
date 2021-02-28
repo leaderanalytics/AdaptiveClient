@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Autofac;
 using NUnit.Framework;
 using LeaderAnalytics.AdaptiveClient;
@@ -31,7 +26,7 @@ namespace LeaderAnalytics.AdaptiveClient.Tests
         {
             LogMessages = new List<string>();
             builder = new ContainerBuilder();
-            EndPoints = EndPointUtilities.LoadEndPoints("EndPoints.json").ToList();
+            EndPoints = EndPointUtilities.LoadEndPoints("appsettings.json").ToList();
             registrationHelper = new RegistrationHelper(builder);
             builder.RegisterModule(new AutofacModule());
             registrationHelper.RegisterModule(new AdaptiveClientModule(EndPoints, msg => this.LogMessages.Add(msg)));

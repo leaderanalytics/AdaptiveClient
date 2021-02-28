@@ -25,8 +25,7 @@ namespace LeaderAnalytics.AdaptiveClient
 
         public IEndPointConfiguration GetEndPoint(string apiName)
         {
-            IEndPointConfiguration result = null;
-            EndPoints.TryGetValue(apiName, out result);
+            EndPoints.TryGetValue(apiName, out IEndPointConfiguration result);
             return result;
         }
 

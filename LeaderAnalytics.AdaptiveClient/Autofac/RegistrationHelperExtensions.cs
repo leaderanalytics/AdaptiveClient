@@ -15,9 +15,9 @@ namespace LeaderAnalytics.AdaptiveClient
         public static RegistrationHelper RegisterEndPoints(this RegistrationHelper helper, IEnumerable<IEndPointConfiguration> endPoints)
         {
             if (endPoints == null)
-                throw new ArgumentNullException("endPoints");
+                throw new ArgumentNullException(nameof(endPoints));
 
-            // Do not register endpoints with the container.  A list of endpoints is available when an Perimeter is resolved.
+            // Do not register endpoints with the container.  A list of endpoints is available when a Perimeter is resolved.
             endPoints = endPoints.Where(x => x.IsActive);
             EndPointUtilities.ValidateEndPoints(endPoints);
 
@@ -36,7 +36,7 @@ namespace LeaderAnalytics.AdaptiveClient
         public static RegistrationHelper RegisterService<TService, TInterface>(this RegistrationHelper helper, IEndPointConfiguration endPoint)
         {
             if (endPoint == null)
-                throw new ArgumentNullException("ep");
+                throw new ArgumentNullException(nameof(endPoint));
 
             RegisterService<TService, TInterface>(helper, endPoint.EndPointType, endPoint.API_Name, endPoint.ProviderName);
             return helper;
@@ -53,9 +53,9 @@ namespace LeaderAnalytics.AdaptiveClient
         public static RegistrationHelper RegisterService<TService, TInterface>(this RegistrationHelper helper, string endPointType, string apiName, string providerName)
         {
             if (String.IsNullOrEmpty(endPointType))
-                throw new ArgumentNullException("endPointType");
+                throw new ArgumentNullException(nameof(endPointType));
             if (string.IsNullOrEmpty(apiName))
-                throw new ArgumentNullException("apiName");
+                throw new ArgumentNullException(nameof(apiName));
             if (providerName == null)
                 providerName = string.Empty;
 
@@ -79,9 +79,9 @@ namespace LeaderAnalytics.AdaptiveClient
         public static RegistrationHelper RegisterEndPointValidator<TValidator>(this RegistrationHelper helper, string endPointType, string providerName) where TValidator : IEndPointValidator
         {
             if (String.IsNullOrEmpty(endPointType))
-                throw new ArgumentNullException("endPointType");
+                throw new ArgumentNullException(nameof(endPointType));
             if (string.IsNullOrEmpty(providerName))
-                throw new ArgumentNullException("providerName");
+                throw new ArgumentNullException(nameof(providerName));
 
             helper.Builder.RegisterType<TValidator>().Keyed<IEndPointValidator>(endPointType + providerName);
             return helper;

@@ -4,23 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Configuration;
 
 namespace LeaderAnalytics.AdaptiveClient
 {
     public static class EndPointUtilities
     {
-        public static IEnumerable<IEndPointConfiguration> LoadEndPoints(string fileName, bool activeOnly = true)
+        public static IEnumerable<IEndPointConfiguration> LoadEndPoints(string fileName, bool activeOnly = true, string sectionName = "EndPoints")
         {
             if (string.IsNullOrEmpty(fileName))
-                throw new ArgumentNullException("fileName");
+                throw new ArgumentNullException(nameof(fileName));
 
             if (!File.Exists(fileName))
                 throw new Exception($"File not found: {fileName}");
 
-            JObject obj = JsonConvert.DeserializeObject(File.ReadAllText(fileName)) as JObject;
-            List<EndPointConfiguration> endpoints = obj["EndPointConfigurations"].ToObject<List<EndPointConfiguration>>().Where(x => (!activeOnly) || x.IsActive).ToList();
+            var endpoints = new ConfigurationBuilder().AddJsonFile(fileName).Build().GetSection(sectionName).Get<IEnumerable<EndPointConfiguration>>()?.Where(x => (!activeOnly) || x.IsActive).ToList();
             return endpoints;
         }
 

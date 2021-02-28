@@ -15,10 +15,5 @@ namespace LeaderAnalytics.AdaptiveClient
         public string ProviderName { get; set; }
         public Dictionary<string, string> Parameters { get; set; }
         public bool IsActive { get; set; }
-
-        public EndPointConfiguration()
-        {
-            //Parameters = new Dictionary<string, string>();
-        }
     }
 }

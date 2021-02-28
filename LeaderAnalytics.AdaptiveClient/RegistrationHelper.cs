@@ -15,15 +15,10 @@ namespace LeaderAnalytics.AdaptiveClient
 
         public RegistrationHelper(ContainerBuilder builder)
         {
-            this.Builder = builder ?? throw new ArgumentNullException("builder");
+            this.Builder = builder ?? throw new ArgumentNullException(nameof(builder));
             builder.RegisterModule(new AutofacModule());
             EndPointDict = new Dictionary<string, IPerimeter>();
             ServiceRegistrations = new Dictionary<string, string>();
         }
-
-        //public RegistrationHelper(SomeOtherBuilder builder)
-        //{
-        //    this.SomeOtherBuilder = builder
-        //}
     }
 }

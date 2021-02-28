@@ -13,7 +13,6 @@ namespace LeaderAnalytics.AdaptiveClient
         {
             base.Load(builder);
             builder.RegisterGeneric(typeof(AdaptiveClient<>)).As(typeof(IAdaptiveClient<>)).InstancePerLifetimeScope();
-            
             builder.Register<Func<IEndPointConfiguration>>(c => { IComponentContext cxt = c.Resolve<IComponentContext>(); return () => cxt.Resolve<EndPointContext>().CurrentEndPoint; });
             builder.Register<Func<Type, IPerimeter>>(c => { ILifetimeScope cxt = c.Resolve<ILifetimeScope>(); return t => new ResolutionHelper(cxt).ResolvePerimeter(t); });
             builder.Register<Func<string, string, IEndPointValidator>>(c => { ILifetimeScope cxt = c.Resolve<ILifetimeScope>(); return (eptype, providerName) => new ResolutionHelper(cxt).ResolveValidator(eptype, providerName); });
