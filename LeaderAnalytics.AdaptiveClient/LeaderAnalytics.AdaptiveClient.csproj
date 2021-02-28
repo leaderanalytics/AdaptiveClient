@@ -4,13 +4,13 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Authors>Sam Wheat</Authors>
+    <Authors>Leader Analytics</Authors>
     <Company>Leader Analytics</Company>
     <Product>AdaptiveClient</Product>
     <Description>Library and pattern for creating a scalable, loosely coupled service layer.  Build interdependent services that are granular and testable.  Inject a single client that allows the application to access the entire service layer.  Provision services across multiple providers and transports with almost zero application infrastructure.</Description>
-    <Copyright>2019 Leader Analytics</Copyright>
+    <Copyright>2021 Leader Analytics</Copyright>
     <PackageProjectUrl>https://github.com/leaderanalytics/AdaptiveClient</PackageProjectUrl>
-    <PackageIconUrl>https://static-s.aa-cdn.net/img/ios/776959045/458370cf178aacd41bc6cf251dd4bd68?v=1</PackageIconUrl>
+    <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/leaderanalytics/AdaptiveClient</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>Leader Analytics LeaderAnalytics AdaptiveClient Adaptive Client Repository MVC MVVM WebAPI WCF AutoFac Entity Framework fallback fall back</PackageTags>
@@ -19,12 +19,16 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <PackageId>AdaptiveClient</PackageId>
-    <PackageLicenseUrl>https://github.com/leaderanalytics/AdaptiveClient/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>license.txt</PackageLicenseFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath="\"/>
+    <None Include="license.txt" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>
