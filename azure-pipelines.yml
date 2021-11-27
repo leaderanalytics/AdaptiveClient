@@ -4,31 +4,60 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+- release/*
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
+  project: '**/LeaderAnalytics.AdaptiveClient.csproj'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  major: 3
+  minor: 0
+  patch: $[counter('aaa', 0)] #increment the name and set the seed to zero when major or minor change
+  NugetVersion: $(major).$(minor).$(patch)
 
 steps:
 - task: NuGetToolInstaller@1
 
+- task: UseDotNet@2
+  displayName: 'Use dotnet 6'
+  inputs:
+    version: '6.x'
+
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '$(solution)'
+    vstsFeed: 'LeaderAnalyticsFeed'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet build'
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    arguments: '--configuration $(buildConfiguration)'
+    projects: $(project)
 
-- task: VSTest@2
+
+- task: DotNetCoreCLI@2
+  displayName: "dotnet pack"
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'pack'
+    arguments: '--configuration $(buildConfiguration)'
+    packagesToPack: $(project)
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'NugetVersion'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    feedsToUse: 'select'
+    vstsFeed: 'LeaderAnalyticsFeed'
+    publishVstsFeed: 'LeaderAnalyticsFeed'
+
+- task: PowerShell@2
+  displayName: "Push package to nuget.org"
+  inputs:
+    targetType: 'inline'
+    script: 'nuget push $(Build.ArtifactStagingDirectory)\*.nupkg -ApiKey $(nuget.org_apikey) -Source https://api.nuget.org/v3/index.json'    
