@@ -1,5 +1,19 @@
 # AdaptiveClient Release Notes
 
+## Version 4.0.0 (2022-12-27)
+* dotnet 7
+* Update dependencies
+
+### Breaking changes
+
+* Drop dotnet Framework 4.6.1 support
+
+
+## Version 3.0.0 (2021-11-27)
+* dotnet 6
+* Update dependencies
+
+ 
 ## Version 2.0.0 (2021-02-27)
 ### Breaking changes
 
