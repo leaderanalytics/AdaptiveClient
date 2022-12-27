@@ -1,7 +1,6 @@
-﻿namespace LeaderAnalytics.AdaptiveClient
+﻿namespace LeaderAnalytics.AdaptiveClient;
+
+public interface IAdaptiveClientModule
 {
-    public interface IAdaptiveClientModule
-    {
-        void Register(RegistrationHelper registrationHelper);
-    }
+    void Register(RegistrationHelper registrationHelper);
 }

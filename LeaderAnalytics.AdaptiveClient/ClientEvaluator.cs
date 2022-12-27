@@ -1,122 +1,116 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿namespace LeaderAnalytics.AdaptiveClient;
 
-namespace LeaderAnalytics.AdaptiveClient
+public class ClientEvaluator<T> : BaseClientFactory<T>, IClientEvaluator<T>
 {
-    public class ClientEvaluator<T> : BaseClientFactory<T>, IClientEvaluator<T>
+    public ClientEvaluator(
+        Func<Type, IPerimeter> epcFactory,
+        Func<string, string, T> serviceFactory,
+        EndPointCache endPointCache,
+        EndPointContext endPointContext,
+        Action<string> logger) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext, logger)
     {
-        public ClientEvaluator(
-            Func<Type, IPerimeter> epcFactory,
-            Func<string, string, T> serviceFactory,
-            EndPointCache endPointCache,
-            EndPointContext endPointContext,
-            Action<string> logger) : base(epcFactory, serviceFactory, null, endPointCache, endPointContext, logger)
-        {
-          
-        }
+      
+    }
 
-        public void Try(Action<T> method, params string[] overrideNames)
-        {
-            TryInternal(method, overrideNames);
-        }
+    public void Try(Action<T> method, params string[] overrideNames)
+    {
+        TryInternal(method, overrideNames);
+    }
 
-        public TResult Try<TResult>(Func<T, TResult> method, params string[] overrideNames)
-        {
-            TResult result = default(TResult);
-            Action<T> proxy = x => result = method(x);
-            TryInternal(proxy, overrideNames);
-            return result;
-        }
+    public TResult Try<TResult>(Func<T, TResult> method, params string[] overrideNames)
+    {
+        TResult result = default(TResult);
+        Action<T> proxy = x => result = method(x);
+        TryInternal(proxy, overrideNames);
+        return result;
+    }
 
-        private void TryInternal(Action<T> method, params string[] overrideNames)
-        {
-            SetAvailableEndPoints(overrideNames);
-            bool success = false;
-            List<Exception> exceptions = null;
+    private void TryInternal(Action<T> method, params string[] overrideNames)
+    {
+        SetAvailableEndPoints(overrideNames);
+        bool success = false;
+        List<Exception> exceptions = null;
 
-            foreach (T client in ClientEnumerator())
+        foreach (T client in ClientEnumerator())
+        {
+            try
             {
-                try
-                {
-                    method(client);
-                    success = true;
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. See the inner exception for more detail.";
-
-                    if (exceptions == null)
-                        exceptions = new List<Exception>(10);
-
-                    exceptions.Add(new Exception(errorMsg, ex));  //  We log but don't throw unless we run out of endpoints
-                    logger?.Invoke(errorMsg);
-                }
+                method(client);
+                success = true;
+                break;
             }
-
-            if (!success)
+            catch (Exception ex)
             {
-                AggregateException aggEx = null;
+                string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. See the inner exception for more detail.";
 
-                if (exceptions != null)
-                    aggEx = new AggregateException(exceptions);
+                if (exceptions == null)
+                    exceptions = new List<Exception>(10);
 
-                throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
+                exceptions.Add(new Exception(errorMsg, ex));  //  We log but don't throw unless we run out of endpoints
+                logger?.Invoke(errorMsg);
             }
         }
 
-        public async Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> method, params string[] overrideNames)
+        if (!success)
         {
-            TResult result = default(TResult);
-            Func<T, Task> proxy = async x => result = await method(x);
-            await TryInternalAsync(proxy, overrideNames);
-            return result;
+            AggregateException aggEx = null;
+
+            if (exceptions != null)
+                aggEx = new AggregateException(exceptions);
+
+            throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
+        }
+    }
+
+    public async Task<TResult> TryAsync<TResult>(Func<T, Task<TResult>> method, params string[] overrideNames)
+    {
+        TResult result = default(TResult);
+        Func<T, Task> proxy = async x => result = await method(x);
+        await TryInternalAsync(proxy, overrideNames);
+        return result;
+    }
+
+    public async Task TryAsync(Func<T, Task> method, params string[] overrideNames)
+    {
+        await TryInternalAsync(method, overrideNames);
+    }
+
+    private async Task TryInternalAsync(Func<T, Task> method, params string[] overrideNames)
+    {
+        SetAvailableEndPoints(overrideNames);
+        bool success = false;
+        List<Exception> exceptions = null;
+
+        foreach (T client in ClientEnumerator())
+        {
+            try
+            {
+                await method(client);
+                success = true;
+                break;
+            }
+            catch (Exception ex)
+            {
+                string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. The connection string is {CachedEndPoint.ConnectionString}. See the inner exception for more detail.";
+
+                if (exceptions == null)
+                    exceptions = new List<Exception>(10);
+
+                exceptions.Add(new Exception(errorMsg, ex));  // We log but don't throw unless we run out of endpoints
+
+                if (logger != null)
+                    logger(errorMsg);
+            }
         }
 
-        public async Task TryAsync(Func<T, Task> method, params string[] overrideNames)
+        if (!success)
         {
-            await TryInternalAsync(method, overrideNames);
-        }
+            AggregateException aggEx = null;
 
-        private async Task TryInternalAsync(Func<T, Task> method, params string[] overrideNames)
-        {
-            SetAvailableEndPoints(overrideNames);
-            bool success = false;
-            List<Exception> exceptions = null;
+            if (exceptions != null)
+                aggEx = new AggregateException(exceptions);
 
-            foreach (T client in ClientEnumerator())
-            {
-                try
-                {
-                    await method(client);
-                    success = true;
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    string errorMsg = $"An error occurred when attempting to connect to EndPointConfiguration named {CachedEndPoint.Name}. The service name is {typeof(T).Name}. The connection string is {CachedEndPoint.ConnectionString}. See the inner exception for more detail.";
-
-                    if (exceptions == null)
-                        exceptions = new List<Exception>(10);
-
-                    exceptions.Add(new Exception(errorMsg, ex));  // We log but don't throw unless we run out of endpoints
-
-                    if (logger != null)
-                        logger(errorMsg);
-                }
-            }
-
-            if (!success)
-            {
-                AggregateException aggEx = null;
-
-                if (exceptions != null)
-                    aggEx = new AggregateException(exceptions);
-
-                throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
-            }
+            throw new Exception($"A functional EndPointConfiguration could not be resolved for client of type {typeof(T).Name}.  See inner exception(s) for more detail.", aggEx);
         }
     }
 }
