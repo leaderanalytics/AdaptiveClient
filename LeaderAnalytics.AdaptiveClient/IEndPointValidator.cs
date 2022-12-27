@@ -1,10 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿namespace LeaderAnalytics.AdaptiveClient;
 
-namespace LeaderAnalytics.AdaptiveClient
+public interface IEndPointValidator
 {
-    public interface IEndPointValidator
-    {
-        bool IsInterfaceAlive(IEndPointConfiguration endPoint);
-        Task<bool> IsInterfaceAliveAsync(IEndPointConfiguration endPoint);
-    }
+    bool IsInterfaceAlive(IEndPointConfiguration endPoint);
+    Task<bool> IsInterfaceAliveAsync(IEndPointConfiguration endPoint);
 }

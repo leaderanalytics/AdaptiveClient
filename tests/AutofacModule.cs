@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LeaderAnalytics.AdaptiveClient;
-using Autofac;
+﻿namespace LeaderAnalytics.AdaptiveClient.Tests;
 
-namespace LeaderAnalytics.AdaptiveClient.Tests
+public class AutofacModule : Module
 {
-    public class AutofacModule : Module
+    protected override void Load(ContainerBuilder builder)
     {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
-        }
-
+        base.Load(builder);
     }
+
 }
