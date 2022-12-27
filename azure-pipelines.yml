@@ -4,7 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- release/*
+  tags:
+      include:
+        - release/*  
 
 pool:
   vmImage: 'windows-latest'
@@ -14,7 +16,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  major: 3
+  major: 4
   minor: 0
   patch: $[counter('aaa', 0)] #increment the name and set the seed to zero when major or minor change
   NugetVersion: $(major).$(minor).$(patch)
@@ -23,9 +25,9 @@ steps:
 - task: NuGetToolInstaller@1
 
 - task: UseDotNet@2
-  displayName: 'Use dotnet 6'
+  displayName: 'Use dotnet 7'
   inputs:
-    version: '6.x'
+    version: '7.x'
 
 - task: NuGetCommand@2
   inputs:
