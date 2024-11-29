@@ -6,7 +6,7 @@ public class MSSQL_EndPointValidator : IEndPointValidator
     {
         bool result = true;
 
-        using (SqlConnection con = new SqlConnection(endPoint.ConnectionString))
+        using (SqlConnection con = new(endPoint.ConnectionString))
         {
             try
             {
@@ -24,7 +24,7 @@ public class MSSQL_EndPointValidator : IEndPointValidator
     {
         bool result = true;
 
-        using (SqlConnection con = new SqlConnection(endPoint.ConnectionString))
+        using (SqlConnection con = new(endPoint.ConnectionString))
         {
             try
             {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.12
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35521.163 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderAnalytics.AdaptiveClient", "LeaderAnalytics.AdaptiveClient\LeaderAnalytics.AdaptiveClient.csproj", "{819FEB01-A162-4128-B20F-894FC3701D78}"
 EndProject
@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeaderAnalytics.AdaptiveCli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EDA24A7-FCED-4B9C-8A9A-46668C4D5BA0}"
 	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
 		FAQ.md = FAQ.md
 		README.md = README.md
 		ReleaseNotes.md = ReleaseNotes.md
+		version.json = version.json
 	EndProjectSection
 EndProject
 Global

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net7.0;</TargetFrameworks>
+    <TargetFrameworks>net9;net8;</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -15,24 +15,22 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>Leader Analytics LeaderAnalytics AdaptiveClient Adaptive Client Repository MVC MVVM WebAPI WCF AutoFac Entity Framework fallback fall back</PackageTags>
     <PackageReleaseNotes>See Repository</PackageReleaseNotes>
-    <Version>4.0.0</Version>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    <FileVersion>4.0.0.0</FileVersion>
-    <PackageId>AdaptiveClient</PackageId>
+    <PackageId>LeaderAnalytics.AdaptiveClient</PackageId>
     <PackageLicenseFile>license</PackageLicenseFile>
+	<PackageOutputPath>C:\\NugetPackages</PackageOutputPath>  
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>LeaderAnalytics.AdaptiveClient</RootNamespace>
+	<AssemblyName>LeaderAnalytics.AdaptiveClient</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="6.5.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.1" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+    <PackageReference Include="Autofac" Version="8.1.1" />
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\icon.png" Pack="true" PackagePath="\" />
     <None Include="..\license" Pack="true" PackagePath="\" />
   </ItemGroup>
-  <Target Name="CopyPackage" AfterTargets="Pack" Condition=" '$(Configuration)'=='Debug' ">
-	<Copy SourceFiles="$(OutputPath)\$(PackageId).$(PackageVersion).nupkg" DestinationFolder="c:\NugetPackages\" />
-	<Copy SourceFiles="$(OutputPath)\$(PackageId).$(PackageVersion).snupkg" DestinationFolder="c:\NugetPackages\" />
-  </Target>
 </Project>

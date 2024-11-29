@@ -1,4 +1,12 @@
 # AdaptiveClient Release Notes
+## Version 5.0.0 (2024-11-29)
+* dotnet 9
+* Update dependencies
+
+### Breaking changes
+
+* Change package ID from AdaptiveClient to LeaderAnalytics.AdaptiveClient
+
 
 ## Version 4.0.0 (2022-12-27)
 * dotnet 7

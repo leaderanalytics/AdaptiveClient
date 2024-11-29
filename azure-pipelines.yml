@@ -12,27 +12,32 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  project: '**/LeaderAnalytics.AdaptiveClient.csproj'
+  project: 'LeaderAnalytics.AdaptiveClient/LeaderAnalytics.AdaptiveClient.csproj'
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  major: 4
-  minor: 0
-  patch: $[counter('aaa', 0)] #increment the name and set the seed to zero when major or minor change
-  NugetVersion: $(major).$(minor).$(patch)
+  
 
 steps:
-- task: NuGetToolInstaller@1
 
-- task: UseDotNet@2
-  displayName: 'Use dotnet 7'
-  inputs:
-    version: '7.x'
+# nbgv need a deep clone
 
-- task: NuGetCommand@2
+- checkout: self
+  fetchDepth: 0
+
+# install nbgv tooling
+
+- task: DotNetCoreCLI@2  
+  displayName: Install NBGV tool
   inputs:
-    restoreSolution: '$(solution)'
-    vstsFeed: 'LeaderAnalyticsFeed'
+    command: custom
+    custom: tool
+    arguments: install --tool-path . nbgv
+
+# allow nbgv to set the version
+
+- script: nbgv cloud
+  displayName: Set Version
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet build'
@@ -41,15 +46,12 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
     projects: $(project)
 
-
 - task: DotNetCoreCLI@2
-  displayName: "dotnet pack"
+  displayName: 'dotnet pack'
   inputs:
-    command: 'pack'
-    arguments: '--configuration $(buildConfiguration)'
-    packagesToPack: $(project)
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'NugetVersion'
+    command: 'custom'
+    custom: 'pack'
+    arguments: '$(project) /p:PublicRelease=true --no-build --include-symbols --include-source -c=Release -o $(build.artifactstagingdirectory)'
 
 - task: NuGetCommand@2
   inputs:
@@ -62,4 +64,4 @@ steps:
   displayName: "Push package to nuget.org"
   inputs:
     targetType: 'inline'
-    script: 'nuget push $(Build.ArtifactStagingDirectory)\*.nupkg -ApiKey $(nuget.org_apikey) -Source https://api.nuget.org/v3/index.json'    
+    script: 'nuget push $(Build.ArtifactStagingDirectory)\*.nupkg -ApiKey $(nuget-apikey) -Source https://api.nuget.org/v3/index.json'    

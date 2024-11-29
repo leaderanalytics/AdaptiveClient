@@ -9,5 +9,5 @@ global using System.Net.Http;
 global using System.Threading.Tasks;
 global using Moq;
 global using NUnit.Framework;
-global using System.Data.SqlClient;
+global using Microsoft.Data.SqlClient;
 
