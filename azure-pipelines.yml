@@ -53,6 +53,14 @@ steps:
     custom: 'pack'
     arguments: '$(project) /p:PublicRelease=true --no-build --include-symbols --include-source -c=Release -o $(build.artifactstagingdirectory)'
 
+- task: AzureKeyVault@2
+  name: KeyVaultSecrets
+  displayName: Get Nuget API key from Key Vault
+  inputs:
+    azureSubscription: 'All Azure Services'
+    KeyVaultName: 'LeaderAnalyticsVault'
+    SecretsFilter: 'nuget-apikey'
+
 - task: NuGetCommand@2
   inputs:
     command: 'push'
