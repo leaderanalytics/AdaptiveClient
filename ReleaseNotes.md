@@ -1,4 +1,8 @@
 # AdaptiveClient Release Notes
+## Version 6.0.0 (2026-04-16)
+* dotnet 10
+* Update dependencies
+
 ## Version 5.0.0 (2024-11-29)
 * dotnet 9
 * Update dependencies

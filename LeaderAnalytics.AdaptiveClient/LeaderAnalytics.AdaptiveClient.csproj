@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net9;net8;</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -24,13 +24,16 @@
 	<AssemblyName>LeaderAnalytics.AdaptiveClient</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.1.1" />
-	<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0" />
-	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
+    <PackageReference Include="Autofac" Version="9.1.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.6" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\icon.png" Pack="true" PackagePath="\" />
     <None Include="..\license" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Nerdbank.GitVersioning" Version="3.9.50" />
   </ItemGroup>
 </Project>
